@@ -15,8 +15,7 @@ export async function register(formData: FormData) {
 
   // Normalize input
   const rawCode = (enrollmentCode || '').trim().toUpperCase();
-  const match = rawCode.match(/^([A-Z]{1,3})(\d{5,10})$/);
-
+  const match = rawCode.match(/^([A-Z]{1,3})(\d{5})$/);
 
   if (!match) {
     redirect('/register?error=Invalid enrollment code format');
@@ -25,8 +24,8 @@ export async function register(formData: FormData) {
   const prefix = match[1];
   const suffixDigits = match[2];
 
+  // 1) Validate prefix matches one of the course prefixes
 
-  // 1) Validate prefix matches one of the 12 course prefixes
   // (prevents arbitrary codes from being entered)
   const { COURSE_ENROLLMENT_PREFIXES } = await import('@/lib/courseEnrollmentPrefixes');
   const validPrefixes = new Set(Object.values(COURSE_ENROLLMENT_PREFIXES));

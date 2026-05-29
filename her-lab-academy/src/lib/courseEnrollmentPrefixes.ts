@@ -1,4 +1,6 @@
 export const COURSE_ENROLLMENT_PREFIXES: Record<string, string> = {
+  // Enrollment codes format enforced in register: PREFIX + 5 digits
+  // PREFIX is 1-3 uppercase letters.
   "Electrical Installation": "EI",
   "Solar PV Installation": "SP",
   "Plumbing": "P",
@@ -11,8 +13,8 @@ export const COURSE_ENROLLMENT_PREFIXES: Record<string, string> = {
   "Basic Digital Literacy": "DL",
   "Entrepreneurship": "E",
   "Beadwork": "B",
-  "Soap Making": "SM",
 };
+
 
 export const COURSE_PREFIXES_SET = new Set(
   Object.values(COURSE_ENROLLMENT_PREFIXES)
