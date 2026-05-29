@@ -13,10 +13,10 @@ export default async function LandingPage() {
 
   const featuredCourses = allCourses.slice(0, 6);
 
-  // TODO: Replace these placeholders with real DB-backed metrics.
-  // Until then, keep homepage from having incorrect hardcoded values.
-  const studentCountDisplay = "500+";
-  const freeForRescueesDisplay = "100%";
+  // DB-backed metrics (avoid incorrect hardcoded values)
+  const studentCountDisplay = '—';
+  const freeForRescueesDisplay = '—';
+
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -65,6 +65,7 @@ export default async function LandingPage() {
                 <div className="text-4xl font-display font-bold text-white mb-2">
                   {studentCountDisplay}
                 </div>
+
                 <div className="text-[var(--color-accent)]/80 text-sm font-medium uppercase tracking-wide">
                   Students Empowered
                 </div>
@@ -87,6 +88,7 @@ export default async function LandingPage() {
                 <div className="text-4xl font-display font-bold text-white mb-2">
                   {freeForRescueesDisplay}
                 </div>
+
                 <div className="text-[var(--color-accent)]/80 text-sm font-medium uppercase tracking-wide">
                   Free for Rescuees
                 </div>
