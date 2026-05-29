@@ -5,27 +5,33 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 
 export async function login(formData: FormData) {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { data: signInData, error } = await supabase.auth.signInWithPassword({
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    });
 
-  if (error || !signInData.user) {
-    redirect('/login?error=' + encodeURIComponent(error?.message ?? 'Login failed'));
+    if (error || !signInData.user) {
+      redirect('/login?error=' + encodeURIComponent(error?.message ?? 'Login failed'));
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', signInData.user.id)
+      .single();
+
+    revalidatePath('/', 'layout');
+
+    const role = profile?.role;
+    if (role === 'admin') redirect('/admin');
+    if (role === 'teacher') redirect('/teacher');
+    redirect('/dashboard');
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Login failed';
+    redirect('/login?error=' + encodeURIComponent(message));
   }
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', signInData.user.id)
-    .single();
-
-  revalidatePath('/', 'layout');
-
-  const role = profile?.role;
-  if (role === 'admin') redirect('/admin');
-  if (role === 'teacher') redirect('/teacher');
-  redirect('/dashboard');
 }
+

@@ -14,6 +14,11 @@ export async function getPublishedCourses(): Promise<PublicCourse[]> {
 
 export async function getPublishedCourseById(id: string) {
   const supabase = await createClient();
+
+  // If the route param isn't a UUID, avoid unnecessary DB queries
+  const uuidV4Like = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidV4Like.test(id)) return null;
+
   const { data: course } = await supabase
     .from('courses')
     .select('id, title, description, category, cover_emoji, cover_image_url, duration_weeks')
@@ -22,6 +27,7 @@ export async function getPublishedCourseById(id: string) {
     .maybeSingle();
 
   if (!course) return null;
+
 
   const { data: modules } = await supabase
     .from('course_modules')

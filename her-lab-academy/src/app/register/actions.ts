@@ -5,65 +5,63 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 
 export async function register(formData: FormData) {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const fullName = formData.get('fullName') as string;
-  const enrollmentCode = formData.get('enrollmentCode') as string;
-  const phone = (formData.get('phone') as string | null) || null;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const fullName = formData.get('fullName') as string;
+    const enrollmentCode = formData.get('enrollmentCode') as string;
+    const phone = (formData.get('phone') as string | null) || null;
 
-  // Normalize input
-  const rawCode = (enrollmentCode || '').trim().toUpperCase();
-  const match = rawCode.match(/^([A-Z]{1,3})(\d{5})$/);
+    // Normalize input
+    const rawCode = (enrollmentCode || '').trim().toUpperCase();
+    const match = rawCode.match(/^([A-Z]{1,3})(\d{5})$/);
 
-  if (!match) {
-    redirect('/register?error=Invalid enrollment code format');
-  }
+    if (!match) {
+      redirect('/register?error=Invalid enrollment code format');
+    }
 
-  const prefix = match[1];
-  const suffixDigits = match[2];
+    const prefix = match[1];
 
-  // 1) Validate prefix matches one of the course prefixes
+    // Validate prefix matches one of the course prefixes
+    const { COURSE_ENROLLMENT_PREFIXES } = await import('@/lib/courseEnrollmentPrefixes');
+    const validPrefixes = new Set(Object.values(COURSE_ENROLLMENT_PREFIXES));
 
-  // (prevents arbitrary codes from being entered)
-  const { COURSE_ENROLLMENT_PREFIXES } = await import('@/lib/courseEnrollmentPrefixes');
-  const validPrefixes = new Set(Object.values(COURSE_ENROLLMENT_PREFIXES));
+    if (!validPrefixes.has(prefix)) {
+      redirect('/register?error=Invalid enrollment code prefix');
+    }
 
-  if (!validPrefixes.has(prefix)) {
-    redirect('/register?error=Invalid enrollment code prefix');
-  }
+    // Verify enrollment code exists in DB
+    const { data: course, error: courseError } = await supabase
+      .from('courses')
+      .select('id')
+      .eq('enrollment_code', rawCode)
+      .single();
 
-  // 2) Verify enrollment code exists in DB
-  const { data: course, error: courseError } = await supabase
-    .from('courses')
-    .select('id')
-    .eq('enrollment_code', rawCode)
-    .single();
+    if (courseError || !course) {
+      redirect('/register?error=Invalid enrollment code');
+    }
 
-  if (courseError || !course) {
-    redirect('/register?error=Invalid enrollment code');
-  }
-
-
-  // 2. Register user
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
+    // Register user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
       },
-    },
-  });
+    });
 
-  if (authError) {
-    redirect('/register?error=' + authError.message);
-  }
+    if (authError || !authData.user) {
+      redirect(
+        '/register?error=' +
+          encodeURIComponent(authError?.message ?? 'Registration failed')
+      );
+    }
 
-  // 3. Create profile manually if trigger doesn't exist, though Supabase might have a trigger.
-  // Wait, the prompt didn't specify a trigger for profiles. So we need to insert it manually.
-  if (authData.user) {
+    // Create profile manually (if you don't have a DB trigger)
     const { error: profileError } = await supabase.from('profiles').insert({
       id: authData.user.id,
       email: authData.user.email,
@@ -84,8 +82,12 @@ export async function register(formData: FormData) {
     if (enrollError) {
       redirect('/register?error=' + encodeURIComponent(enrollError.message));
     }
-  }
 
-  revalidatePath('/', 'layout');
-  redirect('/dashboard');
+    revalidatePath('/', 'layout');
+    redirect('/dashboard');
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'Registration failed';
+    redirect('/register?error=' + encodeURIComponent(message));
+  }
 }
+
