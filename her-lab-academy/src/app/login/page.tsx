@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { login } from "./actions";
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,6 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-6">
 
-        {/* Branding */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <Image
@@ -35,7 +34,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Role badges */}
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <div className="rounded-lg border border-blue-100 bg-blue-50 py-2 px-1">
             <span className="text-lg">🎓</span>
@@ -43,7 +41,7 @@ export default function LoginPage() {
             <p className="text-blue-500 leading-tight">Your learning dashboard</p>
           </div>
           <div className="rounded-lg border border-green-100 bg-green-50 py-2 px-1">
-            <span className="text-lg">👩‍🏫</span>
+            <span className="text-lg">👩🏫</span>
             <p className="font-semibold text-green-700 mt-0.5">Teacher</p>
             <p className="text-green-500 leading-tight">Manage your courses</p>
           </div>
@@ -125,5 +123,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

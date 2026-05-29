@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { register } from "./actions";
 
@@ -45,7 +45,7 @@ function PasswordField() {
   );
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
@@ -152,5 +152,13 @@ export default function RegisterPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }
