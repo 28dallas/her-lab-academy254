@@ -74,14 +74,17 @@ export async function register(formData: FormData) {
     });
 
     if (profileError) {
-       console.error("Profile creation error:", profileError);
+      redirect('/register?error=' + encodeURIComponent(profileError.message));
     }
 
-    // 4. Enroll in the course
-    await supabase.from('enrollments').insert({
+    const { error: enrollError } = await supabase.from('enrollments').insert({
       student_id: authData.user.id,
       course_id: course.id,
     });
+
+    if (enrollError) {
+      redirect('/register?error=' + encodeURIComponent(enrollError.message));
+    }
   }
 
   revalidatePath('/', 'layout');

@@ -43,17 +43,32 @@ export default function DiscussionForum({ params }: { params: { id: string } }) 
     })();
   }, [params.id]);
 
+  const [postError, setPostError] = useState('');
+
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPostContent.trim()) return;
+    setPostError('');
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setPostError('Please sign in to post.');
+      return;
+    }
 
     const { error } = await supabase.from('forum_posts').insert({
       course_id: params.id,
+      author_id: user.id,
       content: newPostContent.trim(),
       type: 'post',
     });
 
-    if (error) return;
+    if (error) {
+      setPostError(error.message);
+      return;
+    }
 
     setNewPostContent('');
     setIsCreatingPost(false);
@@ -103,6 +118,11 @@ export default function DiscussionForum({ params }: { params: { id: string } }) 
           className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8 animate-in fade-in slide-in-from-top-4 duration-300"
         >
           <h3 className="text-lg font-bold text-gray-900 mb-4">Create a New Discussion</h3>
+          {postError && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg mb-4">
+              {postError}
+            </p>
+          )}
           <textarea
             rows={4}
             value={newPostContent}

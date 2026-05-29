@@ -32,6 +32,7 @@ export default function ComplaintsPage() {
 
   const [loading, setLoading] = useState(true);
   const [complaints, setComplaints] = useState<ComplaintRow[]>([]);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -51,14 +52,24 @@ export default function ComplaintsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !message.trim()) return;
+    setSubmitError('');
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setSubmitError('Please sign in to submit a complaint.');
+      return;
+    }
 
     const { error } = await supabase.from('complaints').insert({
+      student_id: user.id,
       subject: subject.trim(),
       message: message.trim(),
     });
 
     if (error) {
-      // Silently ignore for now; empty state requirement is the priority.
+      setSubmitError(error.message);
       return;
     }
 
@@ -99,6 +110,12 @@ export default function ComplaintsPage() {
           className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm space-y-4"
         >
           <h3 className="text-lg font-bold text-gray-900">Submit a Complaint</h3>
+
+          {submitError && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
+              {submitError}
+            </p>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>

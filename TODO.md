@@ -1,30 +1,42 @@
-# TODO
+# Her Lab Academy — Implementation Status
 
-## Enrollment code role-hardening (Option B)
-- [x] Add `src/lib/courseEnrollmentPrefixes.ts` with course title → prefix mapping.
-- [x] Update `src/app/register/actions.ts` to enforce:
-  - letters prefix (A-Z) + digits suffix (5–10 digits)
-  - prefix must match one of the 12 allowed course prefixes
-  - enrollment code must still exist in `courses.enrollment_code`
+## All core phases complete
 
-- [ ] (Next) Update UI hint/placeholder if needed to match new format (e.g. EI12345).
-- [ ] (Next) Add server-side defense-in-depth to block `/register` if a logged-in user is not a student.
+### Phases 1–4 (previous)
+- RLS, student dashboard, teacher tools, admin courses/users/notices
 
-## Supabase data + testing
-- [ ] Create `.env.local` with Supabase URL + anon key.
-- [ ] Update `courses.enrollment_code` in Supabase to match the required formats:
-  - Electrical Installation → EI12345
-  - Solar PV Installation → SP12345
-  - Plumbing → P12345
-  - Cosmetology → C12345
-  - Fashion Design → FD12345
-  - Regenerative Agriculture → RA12345
-  - Core Agriculture → CA12345
-  - Reproductive Health → RH12345
-  - ICT → ICT12345
-  - Basic Digital Literacy → DL12345
-  - Entrepreneurship → E12345
-  - Beadwork → B12345
-- [ ] Create admin + teacher auth users and insert `profiles.role` for portal testing.
-- [ ] Register a student via `/register` and verify dashboard routing + progress pages.
+### Optional features (completed)
+- [x] Public `/courses` catalog + landing page from published Supabase courses
+- [x] Cloudinary file uploads (`/api/upload`) for teacher PDF/image/document resources
+- [x] Auto PDF certificates on 100% course completion (Supabase Storage + `certificates` table)
+- [x] Admin complaints inbox with replies and status management
+- [x] Soap Making enrollment prefix (`SM`)
 
+## Apply migrations
+
+```bash
+cd her-lab-academy
+npx supabase db push
+```
+
+Migrations to apply:
+1. `20260529120000_rls_and_constraints.sql`
+2. `20260529130000_storage_and_certificates.sql`
+
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in:
+- Supabase URL + anon key
+- Cloudinary cloud name, API key, API secret (for file uploads)
+
+## Supabase Storage
+
+Create the `certificates` bucket if migration doesn't run — must be **public** for PDF download links.
+
+## Test flow
+
+1. Admin creates + publishes a course
+2. Teacher adds modules/resources (upload PDF or paste video URL)
+3. Student registers with enrollment code → completes all resources
+4. Certificate auto-appears on `/dashboard/certificates`
+5. Admin replies to student complaints at `/admin/complaints`

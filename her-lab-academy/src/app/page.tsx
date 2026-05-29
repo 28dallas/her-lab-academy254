@@ -3,24 +3,21 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AboutSlideshow } from "@/components/ui/AboutSlideshow";
 import { ArrowRight, BookOpen, Users, Award, ChevronRight } from "lucide-react";
+import { getPublishedCourses, getPublishedCourseCount } from "@/lib/courses";
 
-export default function LandingPage() {
-  // Temporary mock data for the 6 specified courses
-  const featuredCourses = [
-    { id: '1', title: 'Electrical Installation', category: 'Trades', icon: '⚡', duration: '10 weeks', color: 'bg-yellow-50 text-yellow-600' },
-    { id: '2', title: 'Solar PV Installation', category: 'Trades', icon: '☀️', duration: '10 weeks', color: 'bg-orange-50 text-orange-500' },
-    { id: '3', title: 'Plumbing', category: 'Trades', icon: '🔧', duration: '10 weeks', color: 'bg-slate-50 text-slate-600' },
-    { id: '4', title: 'Cosmetology', category: 'Vocational', icon: '✂️', duration: '8 weeks', color: 'bg-pink-50 text-pink-600' },
-    { id: '5', title: 'Fashion Design', category: 'Vocational', icon: '🧵', duration: '16 weeks', color: 'bg-purple-50 text-purple-600' },
-    { id: '6', title: 'Regenerative Agriculture', category: 'Agriculture', icon: '🌍', duration: '12 weeks', color: 'bg-green-50 text-green-600' },
-  ]
+export default async function LandingPage() {
+  const [allCourses, programCount] = await Promise.all([
+    getPublishedCourses(),
+    getPublishedCourseCount(),
+  ]);
+
+  const featuredCourses = allCourses.slice(0, 6);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow">
-        {/* Hero Section */}
         <section className="relative bg-[var(--color-accent)] overflow-hidden">
           <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--color-primary),_transparent_40%)]" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 relative z-10">
@@ -52,10 +49,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats Bar */}
         <section className="bg-[var(--color-secondary)] py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-[var(--color-secondary)]/30 border-white/10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div className="flex flex-col items-center p-4">
                 <div className="p-3 bg-white/10 rounded-full mb-4">
                   <Users className="h-8 w-8 text-[var(--color-accent)]" />
@@ -67,7 +63,7 @@ export default function LandingPage() {
                 <div className="p-3 bg-white/10 rounded-full mb-4">
                   <BookOpen className="h-8 w-8 text-[var(--color-accent)]" />
                 </div>
-                <div className="text-4xl font-display font-bold text-white mb-2">13</div>
+                <div className="text-4xl font-display font-bold text-white mb-2">{programCount}</div>
                 <div className="text-[var(--color-accent)]/80 text-sm font-medium uppercase tracking-wide">Vocational Programs</div>
               </div>
               <div className="flex flex-col items-center p-4">
@@ -81,7 +77,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Course Grid */}
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-12">
@@ -94,24 +89,30 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredCourses.map((course) => (
-                <Link key={course.id} href={`/courses/${course.id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-[var(--color-primary)]/30 transition-all">
-                  <div className={`h-40 flex items-center justify-center text-6xl ${course.color} transition-transform group-hover:scale-105 duration-300`}>
-                    {course.icon}
-                  </div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">{course.category}</span>
-                      <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded text-gray-600">{course.duration}</span>
+            {featuredCourses.length === 0 ? (
+              <div className="text-center py-16 bg-white border border-dashed border-gray-200 rounded-xl">
+                <p className="text-gray-500">Published programs will appear here soon.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredCourses.map((course) => (
+                  <Link key={course.id} href={`/courses/${course.id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-[var(--color-primary)]/30 transition-all">
+                    <div className={`h-40 flex items-center justify-center text-6xl ${course.color} transition-transform group-hover:scale-105 duration-300`}>
+                      {course.icon}
                     </div>
-                    <h3 className="text-xl font-bold text-[var(--color-text-dark)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
-                      {course.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">{course.category}</span>
+                        <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded text-gray-600">{course.duration}</span>
+                      </div>
+                      <h3 className="text-xl font-bold text-[var(--color-text-dark)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
+                        {course.title}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
             
             <div className="mt-10 text-center sm:hidden">
               <Link href="/courses" className="inline-flex items-center text-[var(--color-primary)] font-medium border border-[var(--color-primary)] px-6 py-2 rounded-md">
@@ -121,7 +122,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* About Section */}
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
