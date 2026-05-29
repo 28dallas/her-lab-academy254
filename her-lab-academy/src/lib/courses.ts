@@ -5,7 +5,7 @@ export async function getPublishedCourses(): Promise<PublicCourse[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from('courses')
-    .select('id, title, description, category, cover_emoji, duration_weeks')
+    .select('id, title, description, category, cover_emoji, cover_image_url, duration_weeks')
     .eq('is_published', true)
     .order('title', { ascending: true });
 
@@ -16,7 +16,7 @@ export async function getPublishedCourseById(id: string) {
   const supabase = await createClient();
   const { data: course } = await supabase
     .from('courses')
-    .select('id, title, description, category, cover_emoji, duration_weeks')
+    .select('id, title, description, category, cover_emoji, cover_image_url, duration_weeks')
     .eq('id', id)
     .eq('is_published', true)
     .maybeSingle();

@@ -44,9 +44,17 @@ export default async function PublicCoursePage({ params }: { params: { id: strin
 
               <div className="w-full md:w-80 lg:w-96 flex-shrink-0 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                 <div
-                  className={`h-48 flex items-center justify-center text-7xl ${course.color}`}
+                  className={`h-48 flex items-center justify-center text-7xl relative overflow-hidden ${course.color}`}
                 >
-                  {course.icon}
+                  {course.coverImageUrl ? (
+                    <img
+                      src={course.coverImageUrl}
+                      alt={course.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    course.icon
+                  )}
                 </div>
                 <div className="p-6">
                   <div className="text-2xl font-bold text-[var(--color-text-dark)] mb-4">Free</div>

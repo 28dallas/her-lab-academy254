@@ -120,9 +120,17 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
               <div
                 className={`${
                   viewMode === 'list' ? 'w-32 h-full' : 'h-36 w-full'
-                } flex-shrink-0 flex items-center justify-center text-5xl ${course.color}`}
+                } flex-shrink-0 flex items-center justify-center text-5xl relative overflow-hidden ${course.color}`}
               >
-                {course.icon}
+                {course.coverImageUrl ? (
+                  <img
+                    src={course.coverImageUrl}
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  course.icon
+                )}
               </div>
               <div className={`p-5 ${viewMode === 'list' ? 'flex-grow' : ''}`}>
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">

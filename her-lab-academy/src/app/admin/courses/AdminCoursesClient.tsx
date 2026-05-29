@@ -164,6 +164,16 @@ export default function AdminCoursesClient({
               className="w-full border rounded-lg px-3 py-2 text-sm"
             />
             <input
+              name="enrollmentCode"
+              placeholder="Enrollment code (e.g. EI12345). Leave blank to auto-generate."
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            />
+            <input
+              name="coverImageUrl"
+              placeholder="Cover image URL (optional)"
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            />
+            <input
               name="durationWeeks"
               type="number"
               min={1}

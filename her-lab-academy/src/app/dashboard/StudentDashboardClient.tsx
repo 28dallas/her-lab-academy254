@@ -12,6 +12,7 @@ interface Course {
   id: string;
   title: string;
   icon: string;
+  coverImageUrl?: string | null;
   progress: number;
   status: string;
 }
@@ -123,8 +124,16 @@ export default function StudentDashboardClient({
                     href={`/dashboard/course/${course.id}`}
                     className="block bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-[var(--color-primary)] transition-all group"
                   >
-                    <div className="h-32 flex items-center justify-center text-5xl bg-gray-50 group-hover:scale-105 transition-transform origin-bottom">
-                      {course.icon}
+                    <div className="h-32 flex items-center justify-center text-5xl bg-gray-50 group-hover:scale-105 transition-transform origin-bottom relative overflow-hidden">
+                      {course.coverImageUrl ? (
+                        <img
+                          src={course.coverImageUrl}
+                          alt={course.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        course.icon
+                      )}
                     </div>
                     <div className="p-5">
                       <span className={`text-xs font-bold uppercase tracking-wider ${course.status === 'Completed' ? 'text-green-600' : 'text-[var(--color-primary)]'}`}>

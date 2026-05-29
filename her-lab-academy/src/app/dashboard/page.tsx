@@ -19,7 +19,7 @@ export default async function StudentDashboard() {
   const courseIds = (enrollments ?? []).map(e => e.course_id);
 
   const { data: courses } = courseIds.length > 0
-    ? await supabase.from('courses').select('id, title, cover_emoji').in('id', courseIds)
+    ? await supabase.from('courses').select('id, title, cover_emoji, cover_image_url').in('id', courseIds)
     : { data: [] };
 
   const myCourses = (courses ?? []).map(c => {
@@ -28,6 +28,7 @@ export default async function StudentDashboard() {
       id: c.id,
       title: c.title,
       icon: c.cover_emoji ?? '📚',
+      coverImageUrl: c.cover_image_url,
       progress: enroll?.progress_percent ?? 0,
       status: enroll?.completed ? 'Completed' : 'In Progress',
     };

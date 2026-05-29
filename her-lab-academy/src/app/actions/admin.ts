@@ -32,18 +32,51 @@ export async function createCourse(formData: FormData) {
   const durationWeeks = formData.get('durationWeeks')
     ? Number(formData.get('durationWeeks'))
     : null;
+  const coverImageUrl = (formData.get('coverImageUrl') as string)?.trim() || null;
 
   if (!title) return { error: 'Title is required' };
 
-  let enrollmentCode = generateEnrollmentCode(title);
-  for (let i = 0; i < 5; i++) {
+  const { COURSE_ENROLLMENT_PREFIXES } = await import('@/lib/courseEnrollmentPrefixes');
+  const validPrefixes = new Set(Object.values(COURSE_ENROLLMENT_PREFIXES));
+
+  const customCode = (formData.get('enrollmentCode') as string)?.trim().toUpperCase();
+  let enrollmentCode = '';
+
+  if (customCode) {
+    const match = customCode.match(/^([A-Z]{1,3})(\d{5})$/);
+    if (!match) {
+      return { error: 'Invalid enrollment code format. Must be 1-3 letters followed by exactly 5 digits (e.g. EI12345).' };
+    }
+    const prefix = match[1];
+    if (!validPrefixes.has(prefix)) {
+      return { error: `Invalid enrollment code prefix "${prefix}". Valid prefixes are: ${Array.from(validPrefixes).join(', ')}` };
+    }
+    
     const { data: existing } = await supabase
       .from('courses')
       .select('id')
-      .eq('enrollment_code', enrollmentCode)
+      .eq('enrollment_code', customCode)
       .maybeSingle();
-    if (!existing) break;
+    if (existing) {
+      return { error: `Enrollment code "${customCode}" is already in use by another course.` };
+    }
+    enrollmentCode = customCode;
+  } else {
     enrollmentCode = generateEnrollmentCode(title);
+    const genMatch = enrollmentCode.match(/^([A-Z]{1,3})(\d{5})$/);
+    if (!genMatch || !validPrefixes.has(genMatch[1])) {
+      return { error: `No enrollment code prefix mapped for course title "${title}". Please assign a custom enrollment code manually.` };
+    }
+
+    for (let i = 0; i < 5; i++) {
+      const { data: existing } = await supabase
+        .from('courses')
+        .select('id')
+        .eq('enrollment_code', enrollmentCode)
+        .maybeSingle();
+      if (!existing) break;
+      enrollmentCode = generateEnrollmentCode(title);
+    }
   }
 
   const { error } = await supabase.from('courses').insert({
@@ -52,6 +85,7 @@ export async function createCourse(formData: FormData) {
     category,
     teacher_id: teacherId || null,
     cover_emoji: coverEmoji,
+    cover_image_url: coverImageUrl,
     duration_weeks: durationWeeks,
     enrollment_code: enrollmentCode,
     is_published: false,

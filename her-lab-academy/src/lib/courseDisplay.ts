@@ -6,6 +6,7 @@ export type PublicCourse = {
   duration: string;
   color: string;
   description: string | null;
+  coverImageUrl: string | null;
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -32,6 +33,7 @@ export function mapCourseRow(row: {
   description: string | null;
   category: string | null;
   cover_emoji: string | null;
+  cover_image_url: string | null;
   duration_weeks: number | null;
 }): PublicCourse {
   const category = row.category ?? 'General';
@@ -43,6 +45,7 @@ export function mapCourseRow(row: {
     duration: formatDuration(row.duration_weeks),
     color: categoryColor(category),
     description: row.description,
+    coverImageUrl: row.cover_image_url,
   };
 }
 
