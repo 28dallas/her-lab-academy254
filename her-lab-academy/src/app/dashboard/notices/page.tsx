@@ -1,27 +1,19 @@
+import Link from 'next/link';
 import { Bell } from 'lucide-react';
+import { createClient } from '@/utils/supabase/server';
 
-const notices = [
-  {
-    id: '1',
-    title: 'Graduation Ceremony Date',
-    date: 'Oct 15, 2026',
-    content: 'The graduation ceremony for the upcoming cohort will be held on December 1st, 2026. All students who have completed at least one course are invited. Venue details will be shared soon.',
-  },
-  {
-    id: '2',
-    title: 'New Course Added',
-    date: 'Oct 10, 2026',
-    content: 'We have just added a new short course on Digital Marketing. Check with your admin for enrollment details and the enrollment code.',
-  },
-  {
-    id: '3',
-    title: 'Platform Maintenance Notice',
-    date: 'Oct 5, 2026',
-    content: 'Her Lab Academy will undergo scheduled maintenance on Saturday October 8th from 10pm to 2am EAT. The platform will be unavailable during this window. Please plan your studies accordingly.',
-  },
-];
+export default async function NoticesPage() {
+  const supabase = await createClient();
 
-export default function NoticesPage() {
+  const { data: notices } = await supabase
+    .from('forum_posts')
+    .select('id, content, created_at, course_id')
+    .eq('type', 'announcement')
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  const rows = notices ?? [];
+
   return (
     <div className="max-w-3xl mx-auto pb-12">
       <div className="mb-8">
@@ -31,14 +23,14 @@ export default function NoticesPage() {
         <p className="text-gray-600 mt-2">Important announcements from the Her Lab Academy administration.</p>
       </div>
 
-      {notices.length === 0 ? (
+      {rows.length === 0 ? (
         <div className="text-center py-20 bg-white border border-dashed border-gray-200 rounded-xl">
           <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500">No notices posted yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
-          {notices.map(n => (
+          {rows.map((n) => (
             <div
               key={n.id}
               className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:border-[var(--color-primary)]/30 transition-colors"
@@ -49,8 +41,16 @@ export default function NoticesPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-4 mb-2">
-                    <h3 className="font-bold text-gray-900">{n.title}</h3>
-                    <span className="text-xs font-semibold text-[var(--color-primary)] flex-shrink-0">{n.date}</span>
+                    <h3 className="font-bold text-gray-900">Announcement</h3>
+                    <span className="text-xs font-semibold text-[var(--color-primary)] flex-shrink-0">
+                      {n.created_at
+                        ? new Date(n.created_at).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                        : ''}
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed">{n.content}</p>
                 </div>
@@ -59,6 +59,11 @@ export default function NoticesPage() {
           ))}
         </div>
       )}
+
+      <div className="mt-6 text-xs text-gray-400">
+        Need something else? Contact your admin through <Link className="text-[var(--color-primary)] hover:underline" href="/dashboard/complaints">Complaints</Link>.
+      </div>
     </div>
   );
 }
+

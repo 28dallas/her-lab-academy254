@@ -1,19 +1,34 @@
-'use client';
-
-import React from 'react';
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import { Award, Download, ExternalLink } from 'lucide-react';
+import { Award, Download } from 'lucide-react';
 
-const mockCertificates = [
-  {
-    id: 'cert-001',
-    courseTitle: 'Fashion Design',
-    issuedAt: 'November 15, 2026',
-    certificateUrl: '#',
-  },
-];
+export default async function CertificatesPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-export default function CertificatesPage() {
+  if (!user) {
+    return (
+      <div className="max-w-3xl mx-auto pb-12">
+        <div className="text-center py-20 bg-white border border-dashed border-gray-200 rounded-xl">
+          <Award className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900">Please sign in</h3>
+          <p className="text-gray-500 mt-1">Login to view your certificates.</p>
+          <Link href="/login" className="mt-4 inline-block text-[var(--color-primary)] font-medium hover:underline">
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: certificates } = await supabase
+    .from('certificates')
+    .select('id, course_id, issued_at, certificate_url')
+    .eq('student_id', user.id)
+    .order('issued_at', { ascending: false });
+
+  const certificateRows = certificates ?? [];
+
   return (
     <div className="max-w-3xl mx-auto pb-12">
       <div className="mb-8">
@@ -23,7 +38,7 @@ export default function CertificatesPage() {
         <p className="text-gray-600 mt-2">Certificates are issued automatically when you complete 100% of a course.</p>
       </div>
 
-      {mockCertificates.length === 0 ? (
+      {certificateRows.length === 0 ? (
         <div className="text-center py-20 bg-white border border-dashed border-gray-200 rounded-xl">
           <Award className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900">No certificates yet</h3>
@@ -34,20 +49,22 @@ export default function CertificatesPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {mockCertificates.map(cert => (
+          {certificateRows.map((cert) => (
             <div key={cert.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-xl bg-[var(--color-accent)] flex items-center justify-center flex-shrink-0">
                   <Award className="w-7 h-7 text-[var(--color-primary)]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">{cert.courseTitle}</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">Issued: {cert.issuedAt}</p>
+                  <h3 className="font-bold text-gray-900">Certificate</h3>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    Issued: {cert.issued_at ? new Date(cert.issued_at).toLocaleDateString('en-GB') : '—'}
+                  </p>
                   <p className="text-xs text-gray-400 mt-0.5 font-mono">ID: {cert.id}</p>
                 </div>
               </div>
               <a
-                href={cert.certificateUrl}
+                href={cert.certificate_url ?? '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#cf5626] transition-colors flex-shrink-0"
@@ -61,3 +78,4 @@ export default function CertificatesPage() {
     </div>
   );
 }
+

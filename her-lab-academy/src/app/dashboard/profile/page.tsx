@@ -6,7 +6,8 @@ import { createClient } from '@/utils/supabase/client';
 import { User, Save, KeyRound, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 export default function ProfilePage() {
-  const [fullName, setFullName] = useState('Jane Doe');
+  // Mock profile values removed. Load from Supabase until fully wired.
+  const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [saved, setSaved] = useState(false);
 
