@@ -7,9 +7,11 @@ export function Chatbot() {
   const [message, setMessage] = useState('');
   const [reply, setReply] = useState<string | null>(null);
 
+  // Ensure this component always renders and is easy to test.
   useEffect(() => {
     // Placeholder UI. Wire up your real chatbot provider here.
   }, []);
+
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
