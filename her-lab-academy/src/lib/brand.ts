@@ -5,6 +5,6 @@ export const LOGO_MARK_SRC = '/logo/logo2.png';
 /** Full PERUR wordmark — footer only (transparent PNG). */
 export const LOGO_WORDMARK_SRC = '/logo/logo.png';
 export const LOGO_WORDMARK_ASPECT = 3;
-export const LOGO_MARK_ASPECT = 677 / 369;
+export const LOGO_MARK_ASPECT = 245 / 291;
 export const PROH_ORG_NAME = 'Perur Rays of Hope';
 export const PROH_WEBSITE = 'https://perurraysofhopeke.org/';
