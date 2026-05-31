@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import {
   BRAND_NAME,
+  LOGO_MARK_ASPECT,
   LOGO_MARK_SRC,
   LOGO_WORDMARK_ASPECT,
   LOGO_WORDMARK_SRC,
@@ -25,7 +26,9 @@ export function Logo({
   const height = size;
   const src = variant === 'full' ? LOGO_WORDMARK_SRC : LOGO_MARK_SRC;
   const width =
-    variant === 'full' ? Math.round(size * LOGO_WORDMARK_ASPECT) : size;
+    variant === 'full'
+      ? Math.round(size * LOGO_WORDMARK_ASPECT)
+      : Math.round(size * LOGO_MARK_ASPECT);
 
   return (
     <Image

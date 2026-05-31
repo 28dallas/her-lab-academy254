@@ -38,10 +38,10 @@ export function Navbar({ user, role }: NavbarProps) {
     <nav className="bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)] sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              <Logo size={36} priority />
-              <span className="font-display font-bold text-xl text-[var(--color-text-dark)] hidden sm:block">
+          <div className="flex items-center min-w-0 flex-1">
+            <Link href="/" className="flex items-center gap-2 min-w-0">
+              <Logo size={36} priority className="shrink-0" />
+              <span className="font-display font-bold text-sm sm:text-xl text-[var(--color-text-dark)] leading-tight truncate">
                 {BRAND_NAME}
               </span>
             </Link>
