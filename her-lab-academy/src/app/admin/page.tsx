@@ -55,7 +55,7 @@ export default async function AdminDashboard() {
     <div className="max-w-7xl mx-auto pb-12 space-y-10">
       <div>
         <h1 className="text-3xl font-display font-bold">Platform Analytics</h1>
-        <p className="text-gray-600 mt-1">Overview of Her Lab Academy activity.</p>
+        <p className="text-gray-600 mt-1">Overview of HER Lab University activity.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

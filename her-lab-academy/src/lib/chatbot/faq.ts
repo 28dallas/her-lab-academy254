@@ -31,7 +31,7 @@ export function getFaqReply(
     if (includesAny(q, ['her lab program', 'apply', 'cohort', 'intake', 'asal'])) {
       return matchInstitutionFaq('who can apply')!;
     }
-    return `To use **Her Lab Academy** (this website), go to Register with your enrollment code (PREFIX + 5 digits, e.g. EI12345). Codes are issued by coordinators for published courses. Browse programs at /courses. Supported tracks: ${PROGRAMS}. For **HER Lab in-person intake** (not the website), contact ${PROH_PROFILE.email} or ${PROH_PROFILE.phone}.`;
+    return `To use **HER Lab University** (this website), go to Register with your enrollment code (PREFIX + 5 digits, e.g. EI12345). Codes are issued by coordinators for published courses. Browse programs at /courses. Supported tracks: ${PROGRAMS}. For **HER Lab in-person intake** (not the website), contact ${PROH_PROFILE.email} or ${PROH_PROFILE.phone}.`;
   }
 
   if (includesAny(q, ['code', 'prefix', 'format'])) {
@@ -50,7 +50,7 @@ export function getFaqReply(
   }
 
   if (includesAny(q, ['certificate', 'cert', 'complete', 'graduation', 'graduate'])) {
-    return 'On Her Lab Academy, certificates generate automatically at 100% course progress (view under Dashboard → Certificates). HER Lab in-person graduation ceremonies are separate — ask coordinators about cohort graduations.';
+    return 'On HER Lab University, certificates generate automatically at 100% course progress (view under Dashboard → Certificates). HER Lab in-person graduation ceremonies are separate — ask coordinators about cohort graduations.';
   }
 
   if (includesAny(q, ['teacher', 'instructor', 'faculty', 'lecturer'])) {
@@ -78,11 +78,11 @@ export function getFaqReply(
   }
 
   if (includesAny(q, ['website', 'official', 'perurraysofhope'])) {
-    return `Official website: ${PROH_PROFILE.website} — donate, partner, and news. This app (Her Lab Academy) is the student e-learning portal.`;
+    return `Official website: ${PROH_PROFILE.website} — donate, partner, and news. This app (HER Lab University) is the student e-learning portal.`;
   }
 
   if (includesAny(q, ['who', 'about', 'her lab academy', 'proh', 'perur', 'rays of hope'])) {
-    return `${PROH_PROFILE.officialName} (${PROH_PROFILE.shortName}) — ${PROH_PROFILE.entityType}, founded ${PROH_PROFILE.foundedYear}, registered ${PROH_PROFILE.registeredYear}. Mission: ${PROH_PROFILE.mission} Her Lab Academy is the online portal; ${HER_LAB_PROGRAM.name} is the 12-month in-person flagship in West Pokot. Impact: ${PROH_IMPACT.childrenSupported} children, ${PROH_IMPACT.youthSkilled} youth skilled, ${PROH_IMPACT.womenInSavingsGroups} women in savings groups, ${PROH_IMPACT.treesPlanted} trees planted.`;
+    return `${PROH_PROFILE.officialName} (${PROH_PROFILE.shortName}) — ${PROH_PROFILE.entityType}, founded ${PROH_PROFILE.foundedYear}, registered ${PROH_PROFILE.registeredYear}. Mission: ${PROH_PROFILE.mission} HER Lab University is the online portal; ${HER_LAB_PROGRAM.name} is the 12-month in-person flagship in West Pokot. Impact: ${PROH_IMPACT.childrenSupported} children, ${PROH_IMPACT.youthSkilled} youth skilled, ${PROH_IMPACT.womenInSavingsGroups} women in savings groups, ${PROH_IMPACT.treesPlanted} trees planted.`;
   }
 
   if (includesAny(q, ['partner', 'ggbc', 'mastercard', 'funder'])) {
@@ -93,5 +93,5 @@ export function getFaqReply(
     return 'Progress is tracked when you view course resources. The platform is optimized for low bandwidth — PDFs open in a new tab; videos play only when you tap them.';
   }
 
-  return `I can help with ${PROH_PROFILE.officialName}, HER Lab, partners, impact figures, enrollment, and using Her Lab Academy. Try asking about eligibility, program cost, locations, or how to register. For your question ("${message.trim()}"), email ${PROH_PROFILE.email} if you need personal follow-up.`;
+  return `I can help with ${PROH_PROFILE.officialName}, HER Lab, partners, impact figures, enrollment, and using HER Lab University. Try asking about eligibility, program cost, locations, or how to register. For your question ("${message.trim()}"), email ${PROH_PROFILE.email} if you need personal follow-up.`;
 }

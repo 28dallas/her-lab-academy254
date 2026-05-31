@@ -20,7 +20,7 @@ export default async function NoticesPage() {
         <h1 className="text-3xl font-display font-bold text-[var(--color-text-dark)] flex items-center gap-3">
           <Bell className="w-8 h-8 text-[var(--color-primary)]" /> Notice Board
         </h1>
-        <p className="text-gray-600 mt-2">Important announcements from the Her Lab Academy administration.</p>
+        <p className="text-gray-600 mt-2">Important announcements from the HER Lab University administration.</p>
       </div>
 
       {rows.length === 0 ? (

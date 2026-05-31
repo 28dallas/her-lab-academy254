@@ -12,12 +12,12 @@ export async function generateMetadata({
   params: { id: string };
 }): Promise<Metadata> {
   const course = await getPublishedCourseById(params.id);
-  if (!course) return { title: 'Course Not Found | Her Lab Academy' };
+  if (!course) return { title: 'Course Not Found | HER Lab University' };
   const description =
     course.description?.slice(0, 155) ??
-    `${course.title} — vocational training at Her Lab Academy, West Pokot, Kenya.`;
+    `${course.title} — vocational training at HER Lab University, West Pokot, Kenya.`;
   return {
-    title: `${course.title} | Her Lab Academy`,
+    title: `${course.title} | HER Lab University`,
     description,
     openGraph: {
       title: course.title,
@@ -36,7 +36,7 @@ export default async function PublicCoursePage({ params }: { params: { id: strin
     'Practical, hands-on training',
     'Taught by experienced instructors',
     'Certificate of completion',
-    'Access to Her Lab Academy network',
+    'Access to HER Lab University network',
   ];
 
   return (
@@ -56,7 +56,7 @@ export default async function PublicCoursePage({ params }: { params: { id: strin
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 max-w-3xl leading-relaxed">
                   {course.description ??
-                    'A practical vocational program at Her Lab Academy, designed to build job-ready skills.'}
+                    'A practical vocational program at HER Lab University, designed to build job-ready skills.'}
                 </p>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock className="w-5 h-5 text-gray-400" />

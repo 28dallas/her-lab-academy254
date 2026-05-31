@@ -15,7 +15,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Her Lab Academy - Perur Rays of Hope",
+  title: "HER Lab University - Perur Rays of Hope",
   description: "E-learning platform empowering women and girls rescued from early marriage, FGM, and rural poverty through vocational training.",
 };
 

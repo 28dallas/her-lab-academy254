@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME } from "@/lib/brand";
 
 export function Footer() {
   return (
@@ -7,14 +8,8 @@ export function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="text-center md:text-left">
           <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-            <Image
-              src="/logo/logo.svg"
-              alt="Perur Rays of Hope"
-              width={40}
-              height={40}
-              className="rounded-full object-cover"
-            />
-            <h2 className="font-display text-xl font-bold text-[var(--color-primary)]">Her Lab Academy</h2>
+            <Logo size={44} />
+            <h2 className="font-display text-xl font-bold text-[var(--color-primary)]">{BRAND_NAME}</h2>
           </div>
           <p className="text-sm text-gray-400">Empowering women and girls through vocational training.</p>
         </div>

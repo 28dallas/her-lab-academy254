@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AboutSlideshow } from "@/components/ui/AboutSlideshow";
 import { ArrowRight, BookOpen, Users, Award, ChevronRight } from "lucide-react";
 import { getPublishedCourses, getPublishedCourseCount } from "@/lib/courses";
+import { BRAND_NAME } from "@/lib/brand";
 
 export default async function LandingPage() {
   const [allCourses, programCount] = await Promise.all([
@@ -35,7 +36,7 @@ export default async function LandingPage() {
                 <span className="text-[var(--color-primary)]">Vocational Training</span>
               </h1>
               <p className="text-xl text-gray-600 mb-10 leading-relaxed">
-                Her Lab Academy offers high-quality, practical courses to equip rescued women and girls with the skills they need to build independent, sustainable futures.
+                HER Lab University offers high-quality, practical courses to equip young rural women with the technical skills they need for a dignified, fulfilling future.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Link
@@ -162,27 +163,22 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-gradient-to-b from-white to-gray-50/80">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-              <div className="mb-10 lg:mb-0">
+              <div className="mb-10 lg:mb-0 rounded-2xl overflow-hidden shadow-md ring-1 ring-gray-100">
                 <AboutSlideshow />
               </div>
-              <div>
-                <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] mb-6">
-                  Our Mission in West Pokot
+              <div className="border-l-4 border-[var(--color-primary)] pl-8 py-2">
+                <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] mb-6 leading-snug">
+                  Our Mission in HER Lab West Pokot
                 </h2>
-                <div className="space-y-4 text-gray-600 text-lg">
-                  <p>
-                    Located in West Pokot County, Kenya, the Perur Rays of Hope CBO is dedicated to rescuing girls from early marriage and Female Genital Mutilation (FGM).
-                  </p>
-                  <p>
-                    Her Lab Academy is our digital extension—providing these resilient young women with the vocational training they need to achieve financial independence and become leaders in their communities.
-                  </p>
-                  <p className="font-medium text-[var(--color-secondary)]">
-                    Education is not just a tool; it is the ultimate shield.
-                  </p>
-                </div>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Located in West Pokot County, Kenya, Perur Rays of Hope is dedicated to Breaking the cycles of FGM and early marriage through economic empowerment. We equip young rural women, refugees, and persons with disabilities with technical skills for a dignified, fulfilling future.
+                </p>
+                <p className="mt-6 text-sm font-medium text-[var(--color-secondary)]">
+                  {BRAND_NAME} is our digital learning portal for enrolled students.
+                </p>
               </div>
             </div>
           </div>

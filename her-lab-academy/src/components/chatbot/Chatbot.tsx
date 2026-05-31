@@ -87,8 +87,8 @@ export function Chatbot() {
         <div className="bg-white shadow-xl border border-gray-200 rounded-2xl overflow-hidden w-[min(100vw-2rem,22rem)] flex flex-col max-h-[min(32rem,70vh)]">
           <div className="p-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
             <div>
-              <div className="text-sm font-semibold text-gray-800">Her Lab Assistant</div>
-              <div className="text-[10px] text-gray-500">PRoH · HER Lab · Her Lab Academy</div>
+              <div className="text-sm font-semibold text-gray-800">HER Lab Assistant</div>
+              <div className="text-[10px] text-gray-500">PRoH · HER Lab · HER Lab University</div>
             </div>
             <button
               className="text-gray-500 hover:text-gray-700 p-1"

@@ -1,8 +1,9 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME } from "@/lib/brand";
 import { LogOut, Menu } from "lucide-react";
 import { AvatarFallback } from "@/components/ui/AvatarFallback";
 import { useState } from "react";
@@ -36,16 +37,9 @@ export function Navbar({ user, role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              <Image
-                src="/logo/logo.svg"
-                alt="Her Lab Academy"
-                width={38}
-                height={38}
-                className="rounded-full object-cover"
-                priority
-              />
+              <Logo size={40} priority />
               <span className="font-display font-bold text-xl text-[var(--color-text-dark)] hidden sm:block">
-                Her Lab Academy
+                {BRAND_NAME}
               </span>
             </Link>
           </div>

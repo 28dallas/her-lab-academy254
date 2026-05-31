@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { useState, Suspense } from "react";
+import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME } from "@/lib/brand";
 import { useSearchParams } from "next/navigation";
 import { register } from "./actions";
 
@@ -50,23 +51,16 @@ function RegisterForm() {
   const error = searchParams.get("error");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-accent)]/40 to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-lg border border-gray-100/80">
         <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="/logo/logo.svg"
-              alt="Her Lab Academy"
-              width={56}
-              height={56}
-              className="rounded-full object-cover"
-              priority
-            />
+          <div className="flex justify-center mb-5">
+            <Logo size={72} priority className="drop-shadow-sm" />
           </div>
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)]">
             Create your account
           </h2>
-          <p className="mt-1 text-xs text-gray-500">Her Lab Academy — Empowering Women Through Vocational Training</p>
+          <p className="mt-2 text-xs text-gray-500">{BRAND_NAME}</p>
           <p className="mt-2 text-sm text-gray-600">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-[var(--color-primary)] hover:text-[#cf5626]">

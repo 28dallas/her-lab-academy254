@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { login } from "./actions";
+import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME } from "@/lib/brand";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -12,55 +13,30 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-accent)]/40 to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-2xl shadow-lg border border-gray-100/80 space-y-8">
 
         <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="/logo/logo.svg"
-              alt="Her Lab Academy"
-              width={56}
-              height={56}
-              className="rounded-full object-cover"
-              priority
-            />
+          <div className="flex justify-center mb-5">
+            <Logo size={72} priority className="drop-shadow-sm" />
           </div>
-          <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)]">
+          <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] tracking-tight">
             Welcome back
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Her Lab Academy — sign in to your portal
+          <p className="mt-2 text-sm text-gray-500">
+            {BRAND_NAME} — sign in to your portal
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="rounded-lg border border-blue-100 bg-blue-50 py-2 px-1">
-            <span className="text-lg">🎓</span>
-            <p className="font-semibold text-blue-700 mt-0.5">Student</p>
-            <p className="text-blue-500 leading-tight">Your learning dashboard</p>
-          </div>
-          <div className="rounded-lg border border-green-100 bg-green-50 py-2 px-1">
-            <span className="text-lg">👩🏫</span>
-            <p className="font-semibold text-green-700 mt-0.5">Teacher</p>
-            <p className="text-green-500 leading-tight">Manage your courses</p>
-          </div>
-          <div className="rounded-lg border border-orange-100 bg-orange-50 py-2 px-1">
-            <span className="text-lg">🛡️</span>
-            <p className="font-semibold text-orange-700 mt-0.5">Admin</p>
-            <p className="text-orange-500 leading-tight">Platform management</p>
-          </div>
-        </div>
-
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
             {decodeURIComponent(error)}
           </div>
         )}
 
         <form className="space-y-5" action={login}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
               Email address
             </label>
             <input
@@ -69,13 +45,13 @@ function LoginForm() {
               type="email"
               autoComplete="email"
               required
-              className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent sm:text-sm"
+              className="block w-full px-3.5 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
               Password
             </label>
             <div className="relative">
@@ -85,7 +61,7 @@ function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="block w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent sm:text-sm"
+                className="block w-full px-3.5 py-2.5 pr-10 border border-gray-200 rounded-xl bg-gray-50/50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
                 placeholder="Your password"
               />
               <button
@@ -100,7 +76,7 @@ function LoginForm() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-sm pt-1">
             <Link href="/register" className="text-gray-500 hover:text-[var(--color-primary)] transition-colors">
               New student? Register here
             </Link>
@@ -111,15 +87,14 @@ function LoginForm() {
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-[var(--color-primary)] hover:bg-[#cf5626] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] transition-colors"
+            className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-[var(--color-primary)] hover:bg-[#cf5626] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-primary)] shadow-sm hover:shadow transition-all"
           >
             Sign in
           </button>
         </form>
 
-        <p className="text-xs text-gray-400 text-center">
-          You will be automatically redirected to your portal after sign in.
-          Teachers &amp; Admins — use the credentials provided by your administrator.
+        <p className="text-xs text-gray-400 text-center leading-relaxed">
+          After sign in you are redirected to your dashboard based on your account role.
         </p>
       </div>
     </div>

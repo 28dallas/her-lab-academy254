@@ -1,7 +1,7 @@
 /**
  * Institutional knowledge for Perur Rays of Hope (PRoH) and HER Lab.
  * Sourced from https://perurraysofhopeke.org/ (home, about), press/partner pages,
- * and aligned with this app's Her Lab Academy e-learning portal.
+ * and aligned with this app's HER Lab University e-learning portal.
  */
 
 import { COURSE_ENROLLMENT_PREFIXES } from '@/lib/courseEnrollmentPrefixes';
@@ -79,7 +79,7 @@ export const HER_LAB_PROGRAM = {
     'HER Lab facility in Morpus (Perur Rays of Hope / Morpus area)',
   ],
   digitalExtension:
-    'Her Lab Academy is the online learning portal for enrolled students — modules, resources, progress, certificates, and forums.',
+    'HER Lab University is the online learning portal for enrolled students — modules, resources, progress, certificates, and forums.',
 } as const;
 
 /** HER Lab / TVET curriculum (in-person program). */
@@ -122,11 +122,11 @@ export const INSTITUTION_FAQS: { keywords: string[]; answer: string }[] = [
   },
   {
     keywords: ['cost', 'price', 'fee', 'free', 'pay', 'scholarship'],
-    answer: `Sponsored HER Lab cohorts are offered at zero cost to qualifying participants. Her Lab Academy (this website) is the digital learning portal for enrolled students — there is no public payment flow on the portal.`,
+    answer: `Sponsored HER Lab cohorts are offered at zero cost to qualifying participants. HER Lab University (this website) is the digital learning portal for enrolled students — there is no public payment flow on the portal.`,
   },
   {
     keywords: ['where', 'location', 'facility', 'morpus', 'kapenguria', 'college', 'train'],
-    answer: `PRoH is based in West Pokot County, Kenya (${PROH_PROFILE.postalAddress}). HER Lab technical training is anchored in Morpus, including Pokot Technical and Vocational College and the HER Lab facility. Her Lab Academy lets enrolled students learn online from anywhere with internet access.`,
+    answer: `PRoH is based in West Pokot County, Kenya (${PROH_PROFILE.postalAddress}). HER Lab technical training is anchored in Morpus, including Pokot Technical and Vocational College and the HER Lab facility. HER Lab University lets enrolled students learn online from anywhere with internet access.`,
   },
   {
     keywords: ['donate', 'donation', 'partner', 'volunteer', 'support', 'get involved'],
@@ -162,7 +162,7 @@ export const INSTITUTION_FAQS: { keywords: string[]; answer: string }[] = [
   },
 ];
 
-export const CHATBOT_PERSONALITY = `You are the Her Lab Assistant for Perur Rays of Hope and Her Lab Academy.
+export const CHATBOT_PERSONALITY = `You are the Her Lab Assistant for Perur Rays of Hope and HER Lab University.
 Your tone is warm, encouraging, community-focused, and accessible — especially for learners on low-bandwidth connections.
 Use only the knowledge provided. Do not invent enrollment codes, dates, fees, or job outcomes.
 For portal login/password issues, guide users to /login, /register, /forgot-password, or dashboard Help.
@@ -211,7 +211,7 @@ export function getInstitutionKnowledgeBlock(): string {
 ${VERIFIED_PARTNERS.map((p) => `- ${p}`).join('\n')}
 ${ADDITIONAL_PARTNERS_NOTE}
 
-## Her Lab Academy (this e-learning portal)
+## HER Lab University (this e-learning portal)
 - Public programs catalog: /courses (published courses only)
 - Register with enrollment code: /register (format: 1–3 letter prefix + 5 digits)
 - Portal program tracks (prefixes): ${getPortalProgramList()}
