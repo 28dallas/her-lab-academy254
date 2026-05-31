@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (profile?.role === 'teacher') redirect('/teacher');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
       <Navbar user={user} role="student" />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar role="student" />

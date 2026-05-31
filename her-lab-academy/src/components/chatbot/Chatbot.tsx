@@ -84,14 +84,14 @@ export function Chatbot() {
           <MessageCircle className="w-6 h-6" aria-hidden />
         </button>
       ) : (
-        <div className="bg-white shadow-xl border border-gray-200 rounded-2xl overflow-hidden w-[min(100vw-2rem,22rem)] flex flex-col max-h-[min(32rem,70vh)]">
-          <div className="p-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+        <div className="bg-[var(--color-surface)] shadow-2xl shadow-black/30 border border-[var(--color-border)] rounded-2xl overflow-hidden w-[min(100vw-2rem,22rem)] flex flex-col max-h-[min(32rem,70vh)]">
+          <div className="p-3 bg-[var(--color-bg-muted)] border-b border-[var(--color-border)] flex items-center justify-between shrink-0">
             <div>
-              <div className="text-sm font-semibold text-gray-800">HER Lab Assistant</div>
-              <div className="text-[10px] text-gray-500">PRoH · HER Lab · HER Lab University</div>
+              <div className="text-sm font-semibold text-[var(--color-text)]">HER Lab Assistant</div>
+              <div className="text-[10px] text-[var(--color-text-muted)]">PRoH · HER Lab · HER Lab University</div>
             </div>
             <button
-              className="text-gray-500 hover:text-gray-700 p-1"
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] p-1"
               onClick={() => setOpen(false)}
               type="button"
               aria-label="Close chat"
@@ -107,14 +107,14 @@ export function Chatbot() {
                 className={`text-sm rounded-xl px-3 py-2 max-w-[90%] ${
                   m.role === 'user'
                     ? 'ml-auto bg-[var(--color-primary)] text-white'
-                    : 'mr-auto bg-gray-100 text-gray-800'
+                    : 'mr-auto bg-[var(--color-bg-muted)] text-[var(--color-text)] border border-[var(--color-border)]'
                 }`}
               >
                 {m.content}
               </div>
             ))}
             {loading && (
-              <div className="mr-auto text-xs text-gray-500 px-2">Thinking…</div>
+              <div className="mr-auto text-xs text-[var(--color-text-muted)] px-2">Thinking…</div>
             )}
           </div>
 
@@ -124,7 +124,7 @@ export function Chatbot() {
             </p>
           )}
 
-          <div className="p-3 border-t border-gray-100 shrink-0">
+          <div className="p-3 border-t border-[var(--color-border)] shrink-0 bg-[var(--color-bg-muted)]">
             <form
               className="flex gap-2"
               onSubmit={(e) => {
@@ -136,7 +136,7 @@ export function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={loading}
-                className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-60"
+                className="flex-1 min-w-0 px-3 py-2 border border-[var(--color-border)] rounded-lg text-sm bg-[var(--color-surface)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-60"
                 placeholder="e.g. How do I enroll?"
                 aria-label="Your message"
               />

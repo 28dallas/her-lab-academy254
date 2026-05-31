@@ -51,8 +51,8 @@ function RegisterForm() {
   const error = searchParams.get("error");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-accent)]/40 to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-lg border border-gray-100/80">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-[var(--color-surface)] p-8 sm:p-10 rounded-2xl shadow-2xl shadow-black/30 border border-[var(--color-border)]">
         <div className="text-center">
           <div className="flex justify-center mb-5">
             <Logo size={72} priority className="drop-shadow-sm" />
@@ -60,8 +60,8 @@ function RegisterForm() {
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)]">
             Create your account
           </h2>
-          <p className="mt-2 text-xs text-gray-500">{BRAND_NAME}</p>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-xs text-[var(--color-text-muted)]">{BRAND_NAME}</p>
+          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-[var(--color-primary)] hover:text-[#cf5626]">
               Sign in here

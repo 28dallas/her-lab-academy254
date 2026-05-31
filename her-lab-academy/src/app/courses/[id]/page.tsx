@@ -40,15 +40,15 @@ export default async function PublicCoursePage({ params }: { params: { id: strin
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
       <Navbar />
 
       <main className="flex-grow">
-        <div className="bg-gray-50 border-b border-gray-200 pt-16 pb-20">
+        <div className="bg-[var(--color-bg-muted)] border-b border-[var(--color-border)] pt-16 pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row gap-10 items-start">
               <div className="flex-1">
-                <span className="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-bold uppercase tracking-wider rounded-md mb-4">
+                <span className="inline-block px-3 py-1 bg-[var(--color-surface)] text-[var(--color-text-muted)] text-xs font-bold uppercase tracking-wider rounded-md mb-4 border border-[var(--color-border)]">
                   {course.category}
                 </span>
                 <h1 className="text-4xl md:text-5xl font-display font-bold text-[var(--color-text-dark)] mb-6">
@@ -64,7 +64,7 @@ export default async function PublicCoursePage({ params }: { params: { id: strin
                 </div>
               </div>
 
-              <div className="w-full md:w-80 lg:w-96 flex-shrink-0 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="w-full md:w-80 lg:w-96 flex-shrink-0 panel overflow-hidden shadow-2xl shadow-black/20">
                 <div
                   className={`h-48 flex items-center justify-center text-7xl relative overflow-hidden ${course.color}`}
                 >

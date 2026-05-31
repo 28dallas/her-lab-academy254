@@ -27,12 +27,15 @@ export function Navbar({ user, role }: NavbarProps) {
   const isPublicRoute = pathname === '/' || pathname === '/login' || pathname === '/register' || pathname.startsWith('/courses');
 
   const roleBadgeColor =
-    role === 'admin' ? 'bg-orange-100 text-orange-700' :
-    role === 'teacher' ? 'bg-green-100 text-green-700' :
-    'bg-blue-100 text-blue-700';
+    role === 'admin' ? 'bg-orange-500/20 text-orange-300' :
+    role === 'teacher' ? 'bg-emerald-500/20 text-emerald-300' :
+    'bg-sky-500/20 text-sky-300';
+
+  const navLink =
+    'text-[var(--color-text-muted)] hover:text-[var(--color-primary)] px-3 py-2 text-sm font-medium transition-colors';
 
   return (
-    <nav className="bg-white border-b border-gray-100 sticky top-0 z-40">
+    <nav className="bg-[var(--color-surface)]/95 backdrop-blur-md border-b border-[var(--color-border)] sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -44,17 +47,15 @@ export function Navbar({ user, role }: NavbarProps) {
             </Link>
           </div>
 
-          {/* Desktop nav */}
           <div className="hidden sm:flex sm:items-center sm:gap-4">
             {isPublicRoute && !user && (
               <>
-                <Link href="/courses" className="text-gray-500 hover:text-[var(--color-primary)] px-3 py-2 text-sm font-medium">
-                  Courses
-                </Link>
-                <Link href="/login" className="text-gray-500 hover:text-[var(--color-primary)] px-3 py-2 text-sm font-medium">
-                  Login
-                </Link>
-                <Link href="/register" className="bg-[var(--color-primary)] text-white hover:bg-[#cf5626] px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                <Link href="/courses" className={navLink}>Courses</Link>
+                <Link href="/login" className={navLink}>Login</Link>
+                <Link
+                  href="/register"
+                  className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
                   Register
                 </Link>
               </>
@@ -64,14 +65,14 @@ export function Navbar({ user, role }: NavbarProps) {
               <div className="flex items-center gap-3">
                 <Link
                   href={role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/dashboard'}
-                  className="text-gray-500 hover:text-[var(--color-primary)] text-sm font-medium"
+                  className={navLink}
                 >
                   Dashboard
                 </Link>
-                <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
+                <div className="flex items-center gap-2 pl-3 border-l border-[var(--color-border)]">
                   <AvatarFallback name={user.user_metadata?.full_name || user.email} size="sm" />
                   <div className="hidden md:block">
-                    <p className="text-sm font-medium text-gray-700 leading-tight">
+                    <p className="text-sm font-medium text-[var(--color-text)] leading-tight">
                       {user.user_metadata?.full_name || 'User'}
                     </p>
                     <span className={`text-xs font-semibold px-1.5 py-0.5 rounded capitalize ${roleBadgeColor}`}>
@@ -82,7 +83,7 @@ export function Navbar({ user, role }: NavbarProps) {
                 <form action="/auth/signout" method="post">
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-medium px-2 py-1.5 rounded-md hover:bg-red-50 transition-colors"
+                    className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 font-medium px-2 py-1.5 rounded-md hover:bg-red-500/10 transition-colors"
                     title="Sign out"
                   >
                     <LogOut className="w-4 h-4" />
@@ -93,11 +94,10 @@ export function Navbar({ user, role }: NavbarProps) {
             )}
           </div>
 
-          {/* Mobile hamburger */}
           <div className="flex items-center sm:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="inline-flex items-center justify-center p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-white/5"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -105,28 +105,27 @@ export function Navbar({ user, role }: NavbarProps) {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-gray-100 bg-white">
+        <div className="sm:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="pt-2 pb-3 space-y-1">
             {!user ? (
               <>
-                <Link href="/courses" className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-[var(--color-primary)] hover:bg-gray-50">
+                <Link href="/courses" className="block px-4 py-2 text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)]">
                   Courses
                 </Link>
-                <Link href="/login" className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-[var(--color-primary)] hover:bg-gray-50">
+                <Link href="/login" className="block px-4 py-2 text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)]">
                   Login
                 </Link>
-                <Link href="/register" className="block px-4 py-2 text-base font-medium text-[var(--color-primary)] hover:bg-gray-50">
+                <Link href="/register" className="block px-4 py-2 text-base font-medium text-[var(--color-primary)]">
                   Register
                 </Link>
               </>
             ) : (
               <>
-                <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 mb-2">
+                <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--color-border)] mb-2">
                   <AvatarFallback name={user.user_metadata?.full_name || user.email} size="sm" />
                   <div>
-                    <div className="text-base font-medium text-gray-800">{user.user_metadata?.full_name || 'User'}</div>
+                    <div className="text-base font-medium text-[var(--color-text)]">{user.user_metadata?.full_name || 'User'}</div>
                     <span className={`text-xs font-semibold px-1.5 py-0.5 rounded capitalize ${roleBadgeColor}`}>
                       {role || 'student'}
                     </span>
@@ -134,12 +133,12 @@ export function Navbar({ user, role }: NavbarProps) {
                 </div>
                 <Link
                   href={role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/dashboard'}
-                  className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-[var(--color-primary)] hover:bg-gray-50"
+                  className="block px-4 py-2 text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"
                 >
                   Dashboard
                 </Link>
                 <form action="/auth/signout" method="post">
-                  <button type="submit" className="w-full text-left flex items-center gap-2 px-4 py-2 text-base font-medium text-red-600 hover:bg-red-50">
+                  <button type="submit" className="w-full text-left flex items-center gap-2 px-4 py-2 text-base font-medium text-red-400 hover:bg-red-500/10">
                     <LogOut className="w-4 h-4" /> Sign out
                   </button>
                 </form>

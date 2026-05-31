@@ -51,10 +51,10 @@ export function Sidebar({ role }: SidebarProps) {
   const links = getLinks();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-100 flex-shrink-0 hidden md:block">
+    <aside className="w-64 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex-shrink-0 hidden md:block">
       <div className="h-full flex flex-col py-6">
         <div className="px-6 mb-6">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
             {role} Menu
           </h3>
         </div>
@@ -65,13 +65,13 @@ export function Sidebar({ role }: SidebarProps) {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive 
-                    ? 'bg-[var(--color-accent)] text-[var(--color-primary)]' 
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/20' 
+                    : 'text-[var(--color-text-muted)] hover:bg-white/5 hover:text-[var(--color-text)]'
                 }`}
               >
-                <link.icon className={`h-5 w-5 ${isActive ? 'text-[var(--color-primary)]' : 'text-gray-400'}`} />
+                <link.icon className={`h-5 w-5 ${isActive ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'}`} />
                 {link.name}
               </Link>
             );

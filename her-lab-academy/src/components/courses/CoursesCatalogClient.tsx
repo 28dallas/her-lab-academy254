@@ -19,16 +19,19 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
     return matchesSearch && matchesTab;
   });
 
+  const inputClass =
+    'block w-full pl-10 pr-3 py-2.5 border border-[var(--color-border)] rounded-xl leading-5 bg-[var(--color-surface)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm';
+
   return (
     <>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div className="relative w-full md:w-96">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+            <Search className="h-5 w-5 text-[var(--color-text-muted)]" />
           </div>
           <input
             type="text"
-            className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent sm:text-sm"
+            className={inputClass}
             placeholder="Search programs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -36,16 +39,16 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
-          <div className="flex items-center space-x-1 bg-gray-200/50 p-1 rounded-lg overflow-x-auto w-full sm:w-auto">
+          <div className="flex items-center space-x-1 bg-[var(--color-surface)] border border-[var(--color-border)] p-1 rounded-xl overflow-x-auto w-full sm:w-auto">
             {COURSE_CATEGORY_TABS.map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
                   activeTab === tab
-                    ? 'bg-white text-[var(--color-text-dark)] shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/25'
+                    : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
                 {tab}
@@ -53,11 +56,11 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
             ))}
           </div>
 
-          <div className="hidden sm:flex items-center space-x-1 border border-gray-200 rounded-lg p-1 bg-white">
+          <div className="hidden sm:flex items-center space-x-1 border border-[var(--color-border)] rounded-xl p-1 bg-[var(--color-surface)]">
             <button
               type="button"
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'}`}
+              className={`p-1.5 rounded-lg ${viewMode === 'grid' ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'}`}
               aria-label="Grid view"
             >
               <LayoutGrid className="w-5 h-5" />
@@ -65,7 +68,7 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
             <button
               type="button"
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'}`}
+              className={`p-1.5 rounded-lg ${viewMode === 'list' ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'}`}
               aria-label="List view"
             >
               <ListIcon className="w-5 h-5" />
@@ -75,21 +78,21 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
       </div>
 
       <div className="mb-6">
-        <p className="text-sm text-gray-500">
-          Showing <span className="font-semibold text-gray-900">{filteredCourses.length}</span>{' '}
+        <p className="text-sm text-[var(--color-text-muted)]">
+          Showing <span className="font-semibold text-[var(--color-text)]">{filteredCourses.length}</span>{' '}
           published program{filteredCourses.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {courses.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-          <h3 className="text-lg font-medium text-gray-900">No published programs yet</h3>
-          <p className="mt-1 text-gray-500">Check back soon — new courses are added regularly.</p>
+        <div className="text-center py-20 panel">
+          <h3 className="text-lg font-medium text-[var(--color-text)]">No published programs yet</h3>
+          <p className="mt-1 text-[var(--color-text-muted)]">Check back soon — new courses are added regularly.</p>
         </div>
       ) : filteredCourses.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-          <Search className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900">No programs found</h3>
+        <div className="text-center py-20 panel">
+          <Search className="mx-auto h-12 w-12 text-[var(--color-text-muted)] mb-4" />
+          <h3 className="text-lg font-medium text-[var(--color-text)]">No programs found</h3>
           <button
             type="button"
             onClick={() => {
@@ -113,7 +116,7 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
             <Link
               key={course.id}
               href={`/courses/${course.id}`}
-              className={`group bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-[var(--color-primary)] hover:shadow-md transition-all ${
+              className={`group panel overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl hover:shadow-black/20 transition-all ${
                 viewMode === 'list' ? 'flex flex-row items-center h-32' : 'flex flex-col'
               }`}
             >
@@ -133,13 +136,13 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
                 )}
               </div>
               <div className={`p-5 ${viewMode === 'list' ? 'flex-grow' : ''}`}>
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
                   {course.category}
                 </span>
                 <h3 className="mt-1 text-lg font-bold text-[var(--color-text-dark)] group-hover:text-[var(--color-primary)] line-clamp-2">
                   {course.title}
                 </h3>
-                <p className="mt-3 text-sm text-gray-500">{course.duration}</p>
+                <p className="mt-3 text-sm text-[var(--color-text-muted)]">{course.duration}</p>
               </div>
             </Link>
           ))}

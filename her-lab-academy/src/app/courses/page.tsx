@@ -18,7 +18,7 @@ export default async function CoursesPage() {
   const courses = await getPublishedCourses();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
@@ -26,7 +26,7 @@ export default async function CoursesPage() {
           <h1 className="text-4xl font-display font-bold text-[var(--color-text-dark)] mb-4">
             Our Programs
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl">
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
             Browse our vocational and technical training courses designed to equip you with
             practical, job-ready skills.
           </p>

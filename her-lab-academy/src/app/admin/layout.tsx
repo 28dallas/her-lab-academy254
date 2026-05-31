@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (profile?.role !== 'admin') redirect('/dashboard');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
       <Navbar user={user} role="admin" />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar role="admin" />

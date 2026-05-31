@@ -2,21 +2,43 @@
 
 @theme {
   --color-primary: #E8612C;
+  --color-primary-hover: #cf5626;
   --color-secondary: #2D6A4F;
-  --color-accent: #FDF6EE;
-  --color-text-dark: #1A1A1A;
-  
+  --color-secondary-light: #3d8b68;
+  --color-accent: #1a2332;
+  --color-bg: #0c1117;
+  --color-bg-muted: #121a24;
+  --color-surface: #1a2332;
+  --color-surface-hover: #222d3f;
+  --color-border: #2a3544;
+  --color-text: #e8edf4;
+  --color-text-muted: #8b9cb3;
+  --color-text-dark: #f1f5f9;
+
   --font-display: var(--font-playfair), serif;
   --font-body: var(--font-dm-sans), sans-serif;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #1A1A1A;
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+}
+
+/* Elevated panels used across public + portal pages */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+
+.panel-muted {
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
 }

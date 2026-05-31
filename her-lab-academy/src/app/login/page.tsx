@@ -13,8 +13,9 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[var(--color-accent)]/40 to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-2xl shadow-lg border border-gray-100/80 space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-primary)_0%,_transparent_55%)] opacity-10 pointer-events-none" />
+      <div className="max-w-md w-full relative bg-[var(--color-surface)] p-8 sm:p-10 rounded-2xl shadow-2xl shadow-black/30 border border-[var(--color-border)] space-y-8">
 
         <div className="text-center">
           <div className="flex justify-center mb-5">
@@ -23,7 +24,7 @@ function LoginForm() {
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] tracking-tight">
             Welcome back
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
             {BRAND_NAME} — sign in to your portal
           </p>
         </div>
@@ -36,7 +37,7 @@ function LoginForm() {
 
         <form className="space-y-5" action={login}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="email" className="block text-sm font-medium text-[var(--color-text)] mb-1.5">
               Email address
             </label>
             <input
@@ -45,13 +46,13 @@ function LoginForm() {
               type="email"
               autoComplete="email"
               required
-              className="block w-full px-3.5 py-2.5 border border-gray-200 rounded-xl bg-gray-50/50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
+              className="block w-full px-3.5 py-2.5 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg-muted)] placeholder-[var(--color-text-muted)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-[var(--color-text)] mb-1.5">
               Password
             </label>
             <div className="relative">
@@ -61,7 +62,7 @@ function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                className="block w-full px-3.5 py-2.5 pr-10 border border-gray-200 rounded-xl bg-gray-50/50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
+                className="block w-full px-3.5 py-2.5 pr-10 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg-muted)] placeholder-[var(--color-text-muted)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
                 placeholder="Your password"
               />
               <button
@@ -77,7 +78,7 @@ function LoginForm() {
           </div>
 
           <div className="flex items-center justify-between text-sm pt-1">
-            <Link href="/register" className="text-gray-500 hover:text-[var(--color-primary)] transition-colors">
+            <Link href="/register" className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
               New student? Register here
             </Link>
             <Link href="/forgot-password" className="text-[var(--color-primary)] hover:underline font-medium">
@@ -93,7 +94,7 @@ function LoginForm() {
           </button>
         </form>
 
-        <p className="text-xs text-gray-400 text-center leading-relaxed">
+        <p className="text-xs text-[var(--color-text-muted)] text-center leading-relaxed">
           After sign in you are redirected to your dashboard based on your account role.
         </p>
       </div>

@@ -18,7 +18,7 @@ export default async function TeacherLayout({ children }: { children: React.Reac
   if (profile?.role !== 'teacher') redirect('/dashboard');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg)]">
       <Navbar user={user} role="teacher" />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar role="teacher" />
