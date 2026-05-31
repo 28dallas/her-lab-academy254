@@ -40,7 +40,7 @@ export function Navbar({ user, role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
-              <Logo size={40} priority />
+              <Logo size={36} priority />
               <span className="font-display font-bold text-xl text-[var(--color-text-dark)] hidden sm:block">
                 {BRAND_NAME}
               </span>

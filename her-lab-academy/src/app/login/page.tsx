@@ -19,7 +19,7 @@ function LoginForm() {
 
         <div className="text-center">
           <div className="flex justify-center mb-5">
-            <Logo size={72} priority className="drop-shadow-sm" />
+            <Logo size={72} priority />
           </div>
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] tracking-tight">
             Welcome back
