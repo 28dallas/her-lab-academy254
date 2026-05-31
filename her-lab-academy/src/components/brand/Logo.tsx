@@ -31,15 +31,19 @@ export function Logo({
       : Math.round(size * LOGO_MARK_ASPECT);
 
   return (
-    <Image
-      src={src}
-      alt={variant === 'full' ? PROH_ORG_NAME : BRAND_NAME}
-      width={width}
-      height={height}
-      className={`object-contain bg-transparent ${className}`}
-      priority={priority}
-      quality={95}
-      sizes={variant === 'full' ? `${width}px` : `${size}px`}
-    />
+    <span
+      className={`relative inline-block shrink-0 ${className}`}
+      style={{ width, height, minWidth: width, minHeight: height }}
+    >
+      <Image
+        src={src}
+        alt={variant === 'full' ? PROH_ORG_NAME : BRAND_NAME}
+        fill
+        className={variant === 'full' ? 'object-contain' : 'object-contain object-left'}
+        priority={priority}
+        quality={95}
+        sizes={`${width}px`}
+      />
+    </span>
   );
 }
