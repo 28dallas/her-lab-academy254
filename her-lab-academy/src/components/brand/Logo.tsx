@@ -11,7 +11,7 @@ import {
 type LogoProps = {
   /** Height in pixels; width follows aspect ratio. */
   size?: number;
-  /** `mark` = emblem only (navbar). `full` = PERUR wordmark (footer, auth pages). */
+  /** `mark` = logo2 lockup (navbar, auth). `full` = PERUR wordmark (footer). */
   variant?: 'mark' | 'full';
   className?: string;
   priority?: boolean;
@@ -39,7 +39,7 @@ export function Logo({
         src={src}
         alt={variant === 'full' ? PROH_ORG_NAME : BRAND_NAME}
         fill
-        className={variant === 'full' ? 'object-contain' : 'object-contain object-left'}
+        className="object-contain"
         priority={priority}
         quality={95}
         sizes={`${width}px`}
