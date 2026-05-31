@@ -9,7 +9,7 @@ const slides = [
   { src: '/img/photo_2026-05-28_13-49-46.jpg', caption: 'Hands-on practical sessions' },
   { src: '/img/photo_2026-05-28_13-49-51.jpg', caption: 'Empowering women through skills' },
   { src: '/img/photo_2026-05-28_13-49-55.jpg', caption: 'Building futures in West Pokot' },
-  { src: '/img/photo_2026-05-28_13-49-59.jpg', caption: 'HER Lab University community' },
+  { src: '/img/photo_2026-05-28_13-49-59.jpg', caption: 'HER Lab Academy community' },
 ];
 
 export function AboutSlideshow() {

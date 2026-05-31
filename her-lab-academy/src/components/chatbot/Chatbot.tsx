@@ -88,7 +88,7 @@ export function Chatbot() {
           <div className="p-3 bg-[var(--color-bg-muted)] border-b border-[var(--color-border)] flex items-center justify-between shrink-0">
             <div>
               <div className="text-sm font-semibold text-[var(--color-text)]">HER Lab Assistant</div>
-              <div className="text-[10px] text-[var(--color-text-muted)]">PRoH · HER Lab · HER Lab University</div>
+              <div className="text-[10px] text-[var(--color-text-muted)]">PRoH · HER Lab · HER Lab Academy</div>
             </div>
             <button
               className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] p-1"

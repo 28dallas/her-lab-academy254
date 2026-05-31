@@ -1,25 +1,42 @@
 import Image from 'next/image';
-import { BRAND_NAME, LOGO_ASPECT, LOGO_SRC } from '@/lib/brand';
+import {
+  BRAND_NAME,
+  LOGO_MARK_SRC,
+  LOGO_WORDMARK_ASPECT,
+  LOGO_WORDMARK_SRC,
+  PROH_ORG_NAME,
+} from '@/lib/brand';
 
 type LogoProps = {
-  /** Logo height in pixels; width follows the official 3:1 aspect ratio. */
+  /** Height in pixels; width follows aspect ratio. */
   size?: number;
+  /** `mark` = emblem only (navbar). `full` = PERUR wordmark (footer, auth pages). */
+  variant?: 'mark' | 'full';
   className?: string;
   priority?: boolean;
 };
 
-export function Logo({ size = 40, className = '', priority = false }: LogoProps) {
+export function Logo({
+  size = 40,
+  variant = 'mark',
+  className = '',
+  priority = false,
+}: LogoProps) {
   const height = size;
-  const width = Math.round(size * LOGO_ASPECT);
+  const src = variant === 'full' ? LOGO_WORDMARK_SRC : LOGO_MARK_SRC;
+  const width =
+    variant === 'full' ? Math.round(size * LOGO_WORDMARK_ASPECT) : size;
 
   return (
     <Image
-      src={LOGO_SRC}
-      alt={BRAND_NAME}
+      src={src}
+      alt={variant === 'full' ? PROH_ORG_NAME : BRAND_NAME}
       width={width}
       height={height}
       className={`object-contain bg-transparent ${className}`}
       priority={priority}
+      quality={95}
+      sizes={variant === 'full' ? `${width}px` : `${size}px`}
     />
   );
 }

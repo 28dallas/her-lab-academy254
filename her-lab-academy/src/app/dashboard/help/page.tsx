@@ -29,7 +29,7 @@ export default function HelpPage() {
           <HelpCircle className="w-8 h-8 text-[var(--color-primary)]" /> Help & FAQs
         </h1>
         <p className="text-gray-600 mt-2">
-          About {PROH_PROFILE.officialName}, HER Lab, and using HER Lab University.
+          About {PROH_PROFILE.officialName}, HER Lab, and using HER Lab Academy.
         </p>
       </div>
 

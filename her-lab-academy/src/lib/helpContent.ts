@@ -49,11 +49,11 @@ export const HELP_INSTITUTION_FAQS: HelpFaq[] = [
   },
   {
     q: 'How much do HER Lab programs cost?',
-    a: `Sponsored HER Lab cohorts are ${HER_LAB_PROGRAM.cost.toLowerCase()}. HER Lab University (this website) has no payment flow — it is the free digital learning portal for enrolled students.`,
+    a: `Sponsored HER Lab cohorts are ${HER_LAB_PROGRAM.cost.toLowerCase()}. HER Lab Academy (this website) has no payment flow — it is the free digital learning portal for enrolled students.`,
   },
   {
     q: 'Where is training located?',
-    a: `${PROH_PROFILE.officialName} is based in ${PROH_PROFILE.location} (${PROH_PROFILE.postalAddress}). HER Lab technical training is anchored at ${HER_LAB_PROGRAM.trainingLocations.join(' and ')}. Enrolled students can also learn online through HER Lab University from anywhere with internet access.`,
+    a: `${PROH_PROFILE.officialName} is based in ${PROH_PROFILE.location} (${PROH_PROFILE.postalAddress}). HER Lab technical training is anchored at ${HER_LAB_PROGRAM.trainingLocations.join(' and ')}. Enrolled students can also learn online through HER Lab Academy from anywhere with internet access.`,
   },
   {
     q: 'What impact has Perur Rays of Hope achieved?',
@@ -108,7 +108,7 @@ export const HELP_PORTAL_FAQS: HelpFaq[] = [
   },
   {
     q: 'The platform is slow on my phone. What can I do?',
-    a: 'HER Lab University is optimised for low-bandwidth connections. Use Wi-Fi when possible. PDFs open in a new tab to save data. Videos only play when you tap them — they never autoplay.',
+    a: 'HER Lab Academy is optimised for low-bandwidth connections. Use Wi-Fi when possible. PDFs open in a new tab to save data. Videos only play when you tap them — they never autoplay.',
   },
 ];
 

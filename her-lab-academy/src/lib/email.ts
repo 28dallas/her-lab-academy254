@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const FROM = process.env.RESEND_FROM_EMAIL ?? 'HER Lab University <onboarding@resend.dev>';
+const FROM = process.env.RESEND_FROM_EMAIL ?? 'HER Lab Academy <onboarding@resend.dev>';
 
 export function isEmailConfigured(): boolean {
   return !!process.env.RESEND_API_KEY;
@@ -26,7 +26,7 @@ export async function sendEmail({
 export async function notifyWelcome(email: string, name: string) {
   return sendEmail({
     to: email,
-    subject: 'Welcome to HER Lab University',
+    subject: 'Welcome to HER Lab Academy',
     html: `<p>Hi ${name},</p><p>Your account is ready. Log in to start learning.</p>`,
   });
 }

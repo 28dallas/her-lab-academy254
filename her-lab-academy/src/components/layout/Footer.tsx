@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <Logo size={48} />
+              <Logo size={48} variant="full" />
               <h2 className="font-display text-xl font-bold text-[var(--color-primary)]">{BRAND_NAME}</h2>
             </div>
             <p className="text-sm text-[var(--color-text-muted)] max-w-md leading-relaxed">

@@ -56,9 +56,9 @@ export async function generateCertificate({
     page.drawRectangle({ x: c.x, y: c.y, width: cornerSize, height: cornerSize, color: rgb(0.91, 0.38, 0.17), opacity: 0.12 });
   });
 
-  // Header: HER Lab University
-  page.drawText('HER LAB UNIVERSITY', {
-    x: width / 2 - helveticaBold.widthOfTextAtSize('HER LAB UNIVERSITY', 13) / 2,
+  // Header: HER Lab Academy
+  page.drawText('HER Lab Academy', {
+    x: width / 2 - helveticaBold.widthOfTextAtSize('HER Lab Academy', 13) / 2,
     y: height - 80,
     size: 13,
     font: helveticaBold,
@@ -159,7 +159,7 @@ export async function generateCertificate({
   // Right signature
   page.drawLine({ start: { x: width - 310, y: sigY }, end: { x: width - 130, y: sigY }, thickness: 1, color: DARK, opacity: 0.4 });
   page.drawText('Course Instructor', { x: width - 280, y: sigY - 16, size: 9, font: helvetica, color: rgb(0.4, 0.4, 0.4) });
-  page.drawText('HER Lab University', { x: width - 265, y: sigY - 28, size: 8, font: helvetica, color: rgb(0.5, 0.5, 0.5) });
+  page.drawText('HER Lab Academy', { x: width - 265, y: sigY - 28, size: 8, font: helvetica, color: rgb(0.5, 0.5, 0.5) });
 
   // Certificate ID
   const idText = `Certificate ID: ${certificateId}`;

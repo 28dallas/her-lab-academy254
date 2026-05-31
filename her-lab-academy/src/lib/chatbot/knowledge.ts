@@ -23,5 +23,5 @@ ${getInstitutionKnowledgeBlock()}
 ## Live portal data (updates per request)
 - Currently published online courses: ${published}
 
-Keep answers concise (2–4 short paragraphs unless listing programs). Separate HER Lab (in-person, PRoH/Morpus) from HER Lab University (this website) when relevant.`;
+Keep answers concise (2–4 short paragraphs unless listing programs). Separate HER Lab (in-person, PRoH/Morpus) from HER Lab Academy (this website) when relevant.`;
 }

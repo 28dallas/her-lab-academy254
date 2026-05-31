@@ -5,11 +5,11 @@ import CoursesCatalogClient from '@/components/courses/CoursesCatalogClient';
 import { getPublishedCourses } from '@/lib/courses';
 
 export const metadata: Metadata = {
-  title: 'Our Programs | HER Lab University',
+  title: 'Our Programs | HER Lab Academy',
   description:
-    'Browse vocational and technical training programs for women and girls at HER Lab University, West Pokot, Kenya.',
+    'Browse vocational and technical training programs for women and girls at HER Lab Academy, West Pokot, Kenya.',
   openGraph: {
-    title: 'Our Programs | HER Lab University',
+    title: 'Our Programs | HER Lab Academy',
     description: 'Practical, job-ready vocational courses — free for rescuees.',
   },
 };

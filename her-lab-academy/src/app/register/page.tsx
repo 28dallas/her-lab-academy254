@@ -55,7 +55,7 @@ function RegisterForm() {
       <div className="max-w-md w-full space-y-8 bg-[var(--color-surface)] p-8 sm:p-10 rounded-2xl shadow-2xl shadow-black/30 border border-[var(--color-border)]">
         <div className="text-center">
           <div className="flex justify-center mb-5">
-            <Logo size={72} priority />
+            <Logo size={64} variant="mark" priority />
           </div>
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)]">
             Create your account
