@@ -180,9 +180,65 @@ export async function replyToComplaint(formData: FormData) {
     .update({ status: 'replied' })
     .eq('id', complaintId);
 
+  const { data: complaint } = await supabase
+    .from('complaints')
+    .select('subject, student:student_id ( email )')
+    .eq('id', complaintId)
+    .single();
+
+  const studentEmail = (complaint?.student as { email?: string } | null)?.email;
+  if (studentEmail) {
+    const { notifyComplaintReply } = await import('@/lib/email');
+    await notifyComplaintReply(studentEmail, complaint?.subject ?? 'Complaint');
+  }
+
   revalidatePath('/admin/complaints');
   revalidatePath('/dashboard/complaints');
   return { success: true };
+}
+
+export async function issueCertificateManually(formData: FormData) {
+  const { supabase } = await requireAdmin();
+
+  const studentId = formData.get('studentId') as string;
+  const courseId = formData.get('courseId') as string;
+
+  if (!studentId || !courseId) return { error: 'Student and course required' };
+
+  const { issueCertificateIfNeeded } = await import('@/lib/certificates');
+
+  await supabase
+    .from('enrollments')
+    .update({
+      progress_percent: 100,
+      completed: true,
+      completed_at: new Date().toISOString(),
+    })
+    .eq('student_id', studentId)
+    .eq('course_id', courseId);
+
+  const result = await issueCertificateIfNeeded(supabase, studentId, courseId);
+  if (result.error) return { error: result.error };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', studentId)
+    .single();
+
+  const { data: course } = await supabase
+    .from('courses')
+    .select('title')
+    .eq('id', courseId)
+    .single();
+
+  if (profile?.email && course?.title) {
+    const { notifyCertificate } = await import('@/lib/email');
+    await notifyCertificate(profile.email, course.title);
+  }
+
+  revalidatePath('/admin/certificates');
+  return { success: true, issued: result.issued };
 }
 
 export async function updateComplaintStatus(formData: FormData) {

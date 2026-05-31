@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Her Lab Academy
 
-## Getting Started
+E-learning platform for **Her Lab Academy** (Perur Rays of Hope CBO, West Pokot, Kenya) — vocational training for women and girls.
 
-First, run the development server:
+## Tech stack
+
+- [Next.js 16](https://nextjs.org) (App Router)
+- [Supabase](https://supabase.com) — database, auth, storage
+- [Cloudinary](https://cloudinary.com) — file uploads
+- [Resend](https://resend.com) — optional email notifications
+
+## Setup
 
 ```bash
+cd her-lab-academy
+npm install
+cp .env.local.example .env.local
+# Fill in Supabase + Cloudinary (+ Resend optional)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a project at [supabase.com](https://supabase.com)
+2. Link CLI: `npx supabase login` then `npx supabase link --project-ref YOUR_REF`
+3. Push migrations: `npx supabase db push`
+4. Create first admin (SQL Editor):
 
-## Learn More
+```sql
+update profiles set role = 'admin' where email = 'you@example.com';
+```
 
-To learn more about Next.js, take a look at the following resources:
+See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) and [PROJECT_STATUS.md](./PROJECT_STATUS.md).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest unit tests |
 
-## Deploy on Vercel
+## Roles
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Student** — enroll with code, complete modules, earn certificates
+- **Teacher** — build courses, upload resources, moderate forum
+- **Admin** — manage users, courses, complaints, platform notices
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Private — Perur Rays of Hope CBO.

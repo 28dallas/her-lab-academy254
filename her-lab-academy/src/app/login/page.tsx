@@ -18,7 +18,7 @@ function LoginForm() {
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <Image
-              src="/logo/logo.webp"
+              src="/logo/logo.svg"
               alt="Her Lab Academy"
               width={56}
               height={56}

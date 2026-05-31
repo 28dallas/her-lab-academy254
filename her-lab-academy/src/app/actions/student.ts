@@ -104,3 +104,41 @@ export async function submitEvaluation(formData: FormData) {
   revalidatePath(`/dashboard/evaluation/${courseId}`);
   return { success: true };
 }
+
+export async function submitQuiz(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not authenticated' };
+
+  const quizId = formData.get('quizId') as string;
+  const selectedIndex = Number(formData.get('selectedIndex'));
+
+  const { data: questions } = await supabase
+    .from('quiz_questions')
+    .select('correct_index')
+    .eq('quiz_id', quizId);
+
+  if (!questions?.length) return { error: 'Quiz not found' };
+
+  const correct = questions.filter((q) => q.correct_index === selectedIndex).length;
+  const score = Math.round((correct / questions.length) * 100);
+  const { data: quiz } = await supabase.from('quizzes').select('passing_score').eq('id', quizId).single();
+  const passed = score >= (quiz?.passing_score ?? 70);
+
+  const { error } = await supabase.from('quiz_submissions').upsert(
+    {
+      quiz_id: quizId,
+      student_id: user.id,
+      score,
+      passed,
+      answers: { selectedIndex },
+    },
+    { onConflict: 'quiz_id,student_id' }
+  );
+
+  if (error) return { error: error.message };
+
+  return { success: true, score, passed };
+}

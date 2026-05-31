@@ -37,7 +37,7 @@ export function Navbar({ user, role }: NavbarProps) {
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center gap-2.5">
               <Image
-                src="/logo/logo.webp"
+                src="/logo/logo.svg"
                 alt="Her Lab Academy"
                 width={38}
                 height={38}

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -17,13 +19,10 @@
     "cloudinary": "^2.10.0",
     "lucide-react": "^1.17.0",
     "next": "16.2.6",
-    "next-cloudinary": "^6.17.5",
     "pdf-lib": "^1.17.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-dropzone": "^15.0.0",
-    "react-hot-toast": "^2.6.0",
-    "react-stars": "^2.2.5",
     "resend": "^6.12.4"
   },
   "devDependencies": {
@@ -34,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

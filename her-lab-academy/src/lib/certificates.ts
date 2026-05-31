@@ -18,7 +18,7 @@ export async function issueCertificateIfNeeded(
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, email')
     .eq('id', studentId)
     .single();
 
@@ -71,6 +71,11 @@ export async function issueCertificateIfNeeded(
 
   if (insertError) {
     return { issued: false, error: insertError.message };
+  }
+
+  if (profile?.email) {
+    const { notifyCertificate } = await import('@/lib/email');
+    await notifyCertificate(profile.email, course.title);
   }
 
   return { issued: true };

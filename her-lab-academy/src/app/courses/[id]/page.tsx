@@ -1,9 +1,31 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Clock, BookOpen, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { getPublishedCourseById } from '@/lib/courses';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const course = await getPublishedCourseById(params.id);
+  if (!course) return { title: 'Course Not Found | Her Lab Academy' };
+  const description =
+    course.description?.slice(0, 155) ??
+    `${course.title} — vocational training at Her Lab Academy, West Pokot, Kenya.`;
+  return {
+    title: `${course.title} | Her Lab Academy`,
+    description,
+    openGraph: {
+      title: course.title,
+      description,
+      type: 'website',
+    },
+  };
+}
 
 export default async function PublicCoursePage({ params }: { params: { id: string } }) {
   const course = await getPublishedCourseById(params.id);

@@ -1,7 +1,18 @@
+import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import CoursesCatalogClient from '@/components/courses/CoursesCatalogClient';
 import { getPublishedCourses } from '@/lib/courses';
+
+export const metadata: Metadata = {
+  title: 'Our Programs | Her Lab Academy',
+  description:
+    'Browse vocational and technical training programs for women and girls at Her Lab Academy, West Pokot, Kenya.',
+  openGraph: {
+    title: 'Our Programs | Her Lab Academy',
+    description: 'Practical, job-ready vocational courses — free for rescuees.',
+  },
+};
 
 export default async function CoursesPage() {
   const courses = await getPublishedCourses();

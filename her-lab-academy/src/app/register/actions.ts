@@ -61,17 +61,25 @@ export async function register(formData: FormData) {
       );
     }
 
-    // Create profile manually (if you don't have a DB trigger)
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: authData.user.id,
-      email: authData.user.email,
-      full_name: fullName,
-      role: 'student',
-      ...(phone ? { phone } : {}),
-    });
+    // Upsert profile (DB trigger also creates on signup)
+    const { error: profileError } = await supabase.from('profiles').upsert(
+      {
+        id: authData.user.id,
+        email: authData.user.email,
+        full_name: fullName,
+        role: 'student',
+        ...(phone ? { phone } : {}),
+      },
+      { onConflict: 'id' }
+    );
 
     if (profileError) {
       redirect('/register?error=' + encodeURIComponent(profileError.message));
+    }
+
+    if (authData.user.email) {
+      const { notifyWelcome } = await import('@/lib/email');
+      await notifyWelcome(authData.user.email, fullName);
     }
 
     const { error: enrollError } = await supabase.from('enrollments').insert({

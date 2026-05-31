@@ -13,6 +13,7 @@ export const COURSE_ENROLLMENT_PREFIXES: Record<string, string> = {
   "Basic Digital Literacy": "DL",
   "Entrepreneurship": "E",
   "Beadwork": "B",
+  "Soap Making": "SM",
 };
 
 

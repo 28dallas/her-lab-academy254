@@ -76,6 +76,12 @@ export default async function StudentCourseHome({
     .order('created_at', { ascending: false })
     .limit(5);
 
+  const { data: quizzes } = await supabase
+    .from('quizzes')
+    .select('id, title')
+    .eq('course_id', params.id)
+    .order('created_at', { ascending: false });
+
   const teacherName =
     (course?.teacher as { full_name?: string } | null)?.full_name ??
     'Teacher not assigned yet';
@@ -165,6 +171,23 @@ export default async function StudentCourseHome({
               </Link>
             );
           })}
+        </div>
+      )}
+
+      {(quizzes ?? []).length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Quizzes</h2>
+          <div className="space-y-2">
+            {quizzes!.map((q) => (
+              <Link
+                key={q.id}
+                href={`/dashboard/course/${params.id}/quiz/${q.id}`}
+                className="block bg-white border border-gray-200 rounded-xl p-4 hover:border-[var(--color-primary)]/40"
+              >
+                <span className="font-medium text-gray-900">{q.title}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 

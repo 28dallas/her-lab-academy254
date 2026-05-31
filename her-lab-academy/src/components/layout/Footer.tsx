@@ -8,7 +8,7 @@ export function Footer() {
         <div className="text-center md:text-left">
           <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
             <Image
-              src="/logo/logo.webp"
+              src="/logo/logo.svg"
               alt="Perur Rays of Hope"
               width={40}
               height={40}
