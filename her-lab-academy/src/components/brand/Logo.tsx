@@ -11,7 +11,7 @@ import {
 type LogoProps = {
   /** Height in pixels; width follows aspect ratio. */
   size?: number;
-  /** `mark` = logo2 lockup (navbar, auth). `full` = PERUR wordmark (footer). */
+  /** `mark` = logo1 lockup (navbar, auth). `full` = PERUR wordmark (footer). */
   variant?: 'mark' | 'full';
   className?: string;
   priority?: boolean;
