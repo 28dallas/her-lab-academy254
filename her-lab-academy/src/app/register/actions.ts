@@ -8,66 +8,57 @@ export async function register(formData: FormData) {
   try {
     const supabase = await createClient();
 
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const fullName = formData.get('fullName') as string;
-    const enrollmentCode = formData.get('enrollmentCode') as string;
-    const phone = (formData.get('phone') as string | null) || null;
+    const fullName = (formData.get('fullName') as string)?.trim();
+    const password = (formData.get('password') as string) || '';
+    const studentId = (formData.get('studentId') as string)?.trim().toUpperCase();
+    const courseId = formData.get('courseId') as string;
+    const emailInput = (formData.get('email') as string)?.trim().toLowerCase() || '';
+    const phone = (formData.get('phone') as string)?.trim() || null;
 
-    // Normalize input
-    const rawCode = (enrollmentCode || '').trim().toUpperCase();
-    const match = rawCode.match(/^([A-Z]{1,3})(\d{5})$/);
-
-    if (!match) {
-      redirect('/register?error=Invalid enrollment code format');
+    if (!fullName || !password || !studentId || !courseId) {
+      redirect('/register?error=' + encodeURIComponent('Name, password, student ID, and course are required'));
     }
 
-    const prefix = match[1];
-
-    // Validate prefix matches one of the course prefixes
-    const { COURSE_ENROLLMENT_PREFIXES } = await import('@/lib/courseEnrollmentPrefixes');
-    const validPrefixes = new Set(Object.values(COURSE_ENROLLMENT_PREFIXES));
-
-    if (!validPrefixes.has(prefix)) {
-      redirect('/register?error=Invalid enrollment code prefix');
+    if (!/^[A-Z0-9_-]{4,20}$/.test(studentId)) {
+      redirect('/register?error=' + encodeURIComponent('Invalid student ID format'));
     }
 
-    // Verify enrollment code exists in DB
-    const { data: course, error: courseError } = await supabase
-      .from('courses')
-      .select('id')
-      .eq('enrollment_code', rawCode)
-      .single();
+    const email = emailInput || `${studentId.toLowerCase()}@student.herlab.local`;
 
-    if (courseError || !course) {
-      redirect('/register?error=Invalid enrollment code');
+    const studentQuery = supabase.from('profiles').select('id');
+    if (emailInput) {
+      studentQuery.or(`student_code.eq.${studentId},email.eq.${emailInput}`);
+    } else {
+      studentQuery.eq('student_code', studentId);
     }
 
-    // Register user
+    const { data: existingStudent } = await studentQuery.maybeSingle();
+    if (existingStudent) {
+      redirect('/register?error=' + encodeURIComponent('Student ID or email already in use'));
+    }
+
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          student_code: studentId,
         },
       },
     });
 
     if (authError || !authData.user) {
-      redirect(
-        '/register?error=' +
-          encodeURIComponent(authError?.message ?? 'Registration failed')
-      );
+      redirect('/register?error=' + encodeURIComponent(authError?.message ?? 'Registration failed'));
     }
 
-    // Upsert profile (DB trigger also creates on signup)
     const { error: profileError } = await supabase.from('profiles').upsert(
       {
         id: authData.user.id,
-        email: authData.user.email,
+        email,
         full_name: fullName,
         role: 'student',
+        student_code: studentId,
         ...(phone ? { phone } : {}),
       },
       { onConflict: 'id' }
@@ -77,14 +68,9 @@ export async function register(formData: FormData) {
       redirect('/register?error=' + encodeURIComponent(profileError.message));
     }
 
-    if (authData.user.email) {
-      const { notifyWelcome } = await import('@/lib/email');
-      await notifyWelcome(authData.user.email, fullName);
-    }
-
     const { error: enrollError } = await supabase.from('enrollments').insert({
       student_id: authData.user.id,
-      course_id: course.id,
+      course_id: courseId,
     });
 
     if (enrollError) {
@@ -92,8 +78,11 @@ export async function register(formData: FormData) {
     }
 
     revalidatePath('/', 'layout');
-    redirect('/dashboard');
+    redirect('/login?success=' + encodeURIComponent('Account created. Log in with your Student ID and password.'));
   } catch (e) {
+    if (e instanceof Error && e.message === 'NEXT_REDIRECT') {
+      throw e;
+    }
     const message = e instanceof Error ? e.message : 'Registration failed';
     redirect('/register?error=' + encodeURIComponent(message));
   }

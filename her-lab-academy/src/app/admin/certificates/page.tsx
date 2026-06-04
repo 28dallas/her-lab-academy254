@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import AdminCertificatesClient from './AdminCertificatesClient';
+import AdminCertificatesClient, { type CertRow } from './AdminCertificatesClient';
 
 export default async function AdminCertificatesPage() {
   const supabase = await createClient();
@@ -35,7 +35,7 @@ export default async function AdminCertificatesPage() {
 
   return (
     <AdminCertificatesClient
-      certificates={(certificates as any) ?? []}
+      certificates={(certificates as unknown as CertRow[]) ?? []}
       courses={courses ?? []}
       students={students ?? []}
     />

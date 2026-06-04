@@ -38,7 +38,7 @@ export default function DiscussionForum({ params }: { params: { id: string } }) 
         .is('parent_id', null)
         .order('created_at', { ascending: false });
 
-      setPosts((data as any) ?? []);
+      setPosts((data as unknown as ForumPost[]) ?? []);
       setLoading(false);
     })();
   }, [params.id]);
@@ -84,7 +84,7 @@ export default function DiscussionForum({ params }: { params: { id: string } }) 
       .is('parent_id', null)
       .order('created_at', { ascending: false });
 
-    setPosts((data as any) ?? []);
+    setPosts((data as unknown as ForumPost[]) ?? []);
   };
 
   return (

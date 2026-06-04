@@ -1,19 +1,17 @@
 export const COURSE_ENROLLMENT_PREFIXES: Record<string, string> = {
-  // Enrollment codes format enforced in register: PREFIX + 5 digits
-  // PREFIX is 1-3 uppercase letters.
-  "Electrical Installation": "EI",
+  // Enrollment codes format: PREFIX + 5 digits (PREFIX = 1-3 uppercase letters)
+  "Electrical Installation": "EL",
   "Solar PV Installation": "SP",
-  "Plumbing": "P",
-  "Cosmetology": "C",
+  "Plumbing": "PL",
+  "Cosmetology": "CT",
   "Fashion Design": "FD",
   "Regenerative Agriculture": "RA",
   "Core Agriculture": "CA",
   "Reproductive Health": "RH",
-  "ICT": "ICT",
+  "ICT": "IT",
   "Basic Digital Literacy": "DL",
-  "Entrepreneurship": "E",
-  "Beadwork": "B",
-  "Soap Making": "SM",
+  "Entrepreneurship": "EP",
+  "Beadwork": "BW",
 };
 
 

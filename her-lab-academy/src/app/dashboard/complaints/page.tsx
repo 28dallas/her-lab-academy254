@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { AlertCircle, Clock, MessageSquare, Plus } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
@@ -44,7 +43,7 @@ export default function ComplaintsPage() {
         )
         .order('created_at', { ascending: false });
 
-      setComplaints((data as any) ?? []);
+      setComplaints((data as unknown as ComplaintRow[]) ?? []);
       setLoading(false);
     })();
   }, []);
@@ -84,7 +83,7 @@ export default function ComplaintsPage() {
       )
       .order('created_at', { ascending: false });
 
-    setComplaints((data as any) ?? []);
+    setComplaints((data as unknown as ComplaintRow[]) ?? []);
   };
 
   return (

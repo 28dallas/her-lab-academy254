@@ -44,7 +44,7 @@ async function replyWithOpenAi(
   });
 
   if (!res.ok) {
-    console.error('OpenAI chat error', res.status, await res.text());
+    console.error('OpenAI chat error', res.status);
     return null;
   }
 

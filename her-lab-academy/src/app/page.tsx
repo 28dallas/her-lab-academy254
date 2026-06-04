@@ -12,7 +12,7 @@ export default async function LandingPage() {
     getPublishedCourseCount(),
   ]);
 
-  const featuredCourses = allCourses.slice(0, 6);
+  const featuredCourses = allCourses;
   const studentCountDisplay = '—';
   const freeForRescueesDisplay = '—';
 
@@ -102,7 +102,7 @@ export default async function LandingPage() {
                 {featuredCourses.map((course) => (
                   <Link
                     key={course.id}
-                    href={`/courses/${course.id}`}
+                    href={`/courses/${course.slug}`}
                     className="group panel overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl hover:shadow-black/20 transition-all"
                   >
                     <div

@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useLang } from '@/lib/i18n';
 import {
   BookOpen, Bell, Award, MessageSquare,
   AlertCircle, Star, User, HelpCircle,
-  ChevronRight, Megaphone
+  ChevronRight, Megaphone, FileCheck
 } from 'lucide-react';
 
 interface Course {
@@ -43,6 +44,7 @@ export default function StudentDashboardClient({
   const quickAccess = [
     { icon: BookOpen, label: 'My Courses', href: '#courses', color: 'bg-blue-100 text-blue-600' },
     { icon: Bell, label: 'Notices', href: '#notices', color: 'bg-orange-100 text-orange-600' },
+    { icon: FileCheck, label: 'Results', href: '/dashboard/results', color: 'bg-emerald-100 text-emerald-600' },
     { icon: Award, label: 'Certificates', href: '/dashboard/certificates', color: 'bg-yellow-100 text-yellow-600' },
     { icon: MessageSquare, label: 'Forums', href: '#courses', color: 'bg-purple-100 text-purple-600' },
     { icon: AlertCircle, label: 'Complaints', href: '/dashboard/complaints', color: 'bg-red-100 text-red-600' },
@@ -57,10 +59,12 @@ export default function StudentDashboardClient({
     return c.status === activeTab;
   });
 
+  const { t } = useLang();
+
   return (
     <div className="max-w-7xl mx-auto space-y-12 pb-12">
       <div>
-        <h1 className="text-3xl font-display font-bold text-[var(--color-text-dark)] mb-2">Welcome back, {name}!</h1>
+        <h1 className="text-3xl font-display font-bold text-[var(--color-text-dark)] mb-2">{t('welcome')}, {name}!</h1>
         <p className="text-gray-600">What would you like to learn today?</p>
       </div>
 
@@ -101,7 +105,7 @@ export default function StudentDashboardClient({
             <div className="py-16 text-center bg-white border border-dashed border-gray-200 rounded-xl">
               <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">
-                {myCourses.length === 0 ? 'You are not enrolled in any courses yet.' : 'No courses match this filter.'}
+                {myCourses.length === 0 ? t('noCoursesYet') : 'No courses match this filter.'}
               </p>
               {myCourses.length === 0 && (
                 <p className="text-gray-400 text-sm mt-1">Contact your admin for an enrollment code.</p>

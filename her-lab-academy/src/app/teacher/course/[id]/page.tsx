@@ -1,10 +1,12 @@
 import Link from 'next/link';
-import { BookOpen, Users, FileText, MessageSquare, Bell, Star, Settings, ClipboardList } from 'lucide-react';
+import { BookOpen, Users, FileText, MessageSquare, Bell, Star, Settings, ClipboardList, FileCheck, BookMarked } from 'lucide-react';
 
 const sections = [
   { label: 'Course Outline', desc: 'Build and reorder modules', href: 'outline', icon: BookOpen },
   { label: 'Resources', desc: 'Upload PDFs, videos, docs', href: 'resources', icon: FileText },
-  { label: 'Quizzes', desc: 'Create assessments', href: 'quizzes', icon: ClipboardList },
+  { label: 'Quizzes', desc: 'Create multi-question assessments', href: 'quizzes', icon: ClipboardList },
+  { label: 'Gradebook', desc: 'Per-student scores & progress', href: 'gradebook', icon: BookMarked },
+  { label: 'Results', desc: 'Upload student result slips', href: 'results', icon: FileCheck },
   { label: 'Students', desc: 'View enrollment & progress', href: 'students', icon: Users },
   { label: 'Forum', desc: 'Moderate discussions', href: 'forum', icon: MessageSquare },
   { label: 'Announcements', desc: 'Post course announcements', href: 'announcements', icon: Bell },

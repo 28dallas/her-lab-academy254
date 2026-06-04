@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { categoryColor, formatDuration, mapCourseRow } from './courseDisplay';
+import { categoryColor, formatDuration, mapCourseRow, slugifyCourseTitle } from './courseDisplay';
 
 describe('courseDisplay', () => {
   it('formats duration from weeks', () => {
@@ -14,12 +14,19 @@ describe('courseDisplay', () => {
       title: 'Plumbing',
       description: 'Test',
       category: 'Trades',
-      cover_emoji: '🔧',
+      cover_emoji: 'PL',
+      cover_image_url: null,
       duration_weeks: 10,
     });
     expect(row.title).toBe('Plumbing');
-    expect(row.icon).toBe('🔧');
+    expect(row.slug).toBe('plumbing');
+    expect(row.icon).toBe('PL');
     expect(row.category).toBe('Trades');
+  });
+
+  it('slugifies course titles for public links', () => {
+    expect(slugifyCourseTitle('Solar PV Installation')).toBe('solar-pv-installation');
+    expect(slugifyCourseTitle('Health & Safety Basics')).toBe('health-and-safety-basics');
   });
 
   it('returns fallback category color', () => {

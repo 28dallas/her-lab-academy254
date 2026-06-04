@@ -175,6 +175,61 @@ export async function deleteResource(
   return { success: true };
 }
 
+export async function createResultSlip(courseId: string, formData: FormData) {
+  const { supabase, user } = await requireCourseTeacher(courseId);
+
+  const studentId = formData.get('studentId') as string;
+  const title = (formData.get('title') as string)?.trim();
+  const fileUrl = (formData.get('fileUrl') as string)?.trim();
+  const fileSize = (formData.get('fileSize') as string)?.trim() || null;
+  const remarks = (formData.get('remarks') as string)?.trim() || null;
+
+  if (!studentId || !title || !fileUrl) {
+    return { error: 'Student, title, and uploaded file are required' };
+  }
+
+  const { data: enrollment } = await supabase
+    .from('enrollments')
+    .select('id')
+    .eq('student_id', studentId)
+    .eq('course_id', courseId)
+    .maybeSingle();
+
+  if (!enrollment) return { error: 'Student is not enrolled in this course' };
+
+  const { error } = await supabase.from('result_slips').insert({
+    student_id: studentId,
+    course_id: courseId,
+    uploaded_by: user.id,
+    title,
+    file_url: fileUrl,
+    file_size: fileSize,
+    remarks,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/teacher/course/${courseId}/results`);
+  revalidatePath('/dashboard/results');
+  return { success: true };
+}
+
+export async function deleteResultSlip(courseId: string, resultSlipId: string) {
+  const { supabase } = await requireCourseTeacher(courseId);
+
+  const { error } = await supabase
+    .from('result_slips')
+    .delete()
+    .eq('id', resultSlipId)
+    .eq('course_id', courseId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/teacher/course/${courseId}/results`);
+  revalidatePath('/dashboard/results');
+  return { success: true };
+}
+
 export async function postCourseAnnouncement(
   courseId: string,
   formData: FormData
@@ -315,5 +370,54 @@ export async function deleteAnnouncement(
   if (error) return { error: error.message };
 
   revalidatePath(`/teacher/course/${courseId}/announcements`);
+  return { success: true };
+}
+
+export async function addQuizQuestion(courseId: string, formData: FormData) {
+  const { supabase } = await requireCourseTeacher(courseId);
+
+  const quizId = formData.get('quizId') as string;
+  const question = (formData.get('question') as string)?.trim();
+  const options = (formData.get('options') as string)?.split('|').map((o) => o.trim()).filter(Boolean);
+  const correctIndex = Number(formData.get('correctIndex') ?? 0);
+
+  if (!quizId || !question || options.length < 2) {
+    return { error: 'Quiz ID, question, and at least 2 options are required' };
+  }
+
+  const { data: existing } = await supabase
+    .from('quiz_questions')
+    .select('order_index')
+    .eq('quiz_id', quizId)
+    .order('order_index', { ascending: false })
+    .limit(1);
+
+  const nextOrder = (existing?.[0]?.order_index ?? 0) + 1;
+
+  const { error } = await supabase.from('quiz_questions').insert({
+    quiz_id: quizId,
+    question,
+    options,
+    correct_index: correctIndex,
+    order_index: nextOrder,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/teacher/course/${courseId}/quizzes`);
+  return { success: true };
+}
+
+export async function deleteQuizQuestion(courseId: string, questionId: string) {
+  const { supabase } = await requireCourseTeacher(courseId);
+
+  const { error } = await supabase
+    .from('quiz_questions')
+    .delete()
+    .eq('id', questionId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/teacher/course/${courseId}/quizzes`);
   return { success: true };
 }

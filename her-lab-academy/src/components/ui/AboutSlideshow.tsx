@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -16,19 +16,19 @@ export function AboutSlideshow() {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
 
-  useEffect(() => {
-    const timer = setInterval(() => goTo((current + 1) % slides.length), 4500);
-    return () => clearInterval(timer);
-  }, [current]);
-
-  const goTo = (idx: number) => {
+  const goTo = useCallback((idx: number) => {
     if (animating) return;
     setAnimating(true);
     setTimeout(() => {
       setCurrent(idx);
       setAnimating(false);
     }, 250);
-  };
+  }, [animating]);
+
+  useEffect(() => {
+    const timer = setInterval(() => goTo((current + 1) % slides.length), 4500);
+    return () => clearInterval(timer);
+  }, [current, goTo]);
 
   const prev = () => goTo((current - 1 + slides.length) % slides.length);
   const next = () => goTo((current + 1) % slides.length);

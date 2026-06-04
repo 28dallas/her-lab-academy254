@@ -10,6 +10,7 @@ import { BRAND_NAME } from "@/lib/brand";
 function LoginForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
+  const success = searchParams.get("success");
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -34,20 +35,25 @@ function LoginForm() {
             {decodeURIComponent(error)}
           </div>
         )}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
+            {decodeURIComponent(success)}
+          </div>
+        )}
 
         <form className="space-y-5" action={login}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--color-text)] mb-1.5">
-              Email address
+            <label htmlFor="studentId" className="block text-sm font-medium text-[var(--color-text)] mb-1.5">
+              Student ID or email
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
+              id="studentId"
+              name="studentId"
+              type="text"
+              autoComplete="username"
               required
               className="block w-full px-3.5 py-2.5 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg-muted)] placeholder-[var(--color-text-muted)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
-              placeholder="you@example.com"
+              placeholder="Enter your student ID or email"
             />
           </div>
 

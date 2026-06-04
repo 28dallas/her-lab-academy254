@@ -88,7 +88,7 @@ export async function createCourse(formData: FormData) {
     cover_image_url: coverImageUrl,
     duration_weeks: durationWeeks,
     enrollment_code: enrollmentCode,
-    is_published: false,
+    is_published: true,
   });
 
   if (error) return { error: error.message };
@@ -136,6 +136,116 @@ export async function updateUserRole(formData: FormData) {
   if (error) return { error: error.message };
 
   revalidatePath('/admin/users');
+  return { success: true };
+}
+
+export async function createStudent(formData: FormData) {
+  const { supabase } = await requireAdmin();
+
+  const fullName = (formData.get('fullName') as string)?.trim();
+  const email = (formData.get('email') as string)?.trim().toLowerCase();
+  const studentId = (formData.get('studentId') as string)?.trim().toUpperCase();
+  const courseId = formData.get('courseId') as string;
+  const phone = (formData.get('phone') as string)?.trim() || null;
+
+  if (!fullName || !email || !studentId || !courseId) {
+    return { error: 'Name, email, student ID and course are required.' };
+  }
+
+  if (!/^[A-Z0-9_-]{4,20}$/.test(studentId)) {
+    return { error: 'Student ID must be 4-20 characters and use letters, numbers, underscores or hyphens.' };
+  }
+
+  const { data: existingStudent } = await supabase
+    .from('profiles')
+    .select('id')
+    .or(`student_code.eq.${studentId},email.eq.${email}`)
+    .maybeSingle();
+
+  if (existingStudent) {
+    return { error: 'A student with that ID or email already exists.' };
+  }
+
+  const password = crypto.randomUUID().slice(0, 16);
+
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        student_code: studentId,
+      },
+    },
+  });
+
+  if (authError || !authData.user) {
+    return { error: authError?.message ?? 'Unable to create student account.' };
+  }
+
+  const { error: profileError } = await supabase.from('profiles').upsert(
+    {
+      id: authData.user.id,
+      email,
+      full_name: fullName,
+      role: 'student',
+      student_code: studentId,
+      ...(phone ? { phone } : {}),
+    },
+    { onConflict: 'id' }
+  );
+
+  if (profileError) {
+    return { error: profileError.message };
+  }
+
+  const { error: enrollError } = await supabase.from('enrollments').insert({
+    student_id: authData.user.id,
+    course_id: courseId,
+  });
+
+  if (enrollError) {
+    return { error: enrollError.message };
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ?? 'http://localhost:3000';
+  const redirectTo = `${appUrl}/reset-password`;
+
+  const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  if (resetError) {
+    return { error: resetError.message };
+  }
+
+  revalidatePath('/admin/users');
+  return { success: true };
+}
+
+export async function sendAdminPasswordReset(formData: FormData) {
+  const { supabase } = await requireAdmin();
+
+  const userId = formData.get('userId') as string;
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('email')
+    .eq('id', userId)
+    .single();
+
+  if (profileError) return { error: profileError.message };
+  if (!profile?.email) return { error: 'User does not have an email address' };
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ?? 'http://localhost:3000';
+  const redirectTo = `${appUrl}/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(profile.email, {
+    redirectTo,
+  });
+
+  if (error) return { error: error.message };
+
   return { success: true };
 }
 
@@ -259,5 +369,31 @@ export async function updateComplaintStatus(formData: FormData) {
   if (error) return { error: error.message };
 
   revalidatePath('/admin/complaints');
+  return { success: true };
+}
+
+export async function deleteNotice(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const noticeId = formData.get('noticeId') as string;
+  const { error } = await supabase
+    .from('forum_posts')
+    .delete()
+    .eq('id', noticeId)
+    .eq('type', 'announcement')
+    .is('course_id', null);
+  if (error) return { error: error.message };
+  revalidatePath('/admin/notices');
+  return { success: true };
+}
+
+export async function deleteUser(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const userId = formData.get('userId') as string;
+  if (!userId) return { error: 'User ID required' };
+  // Remove enrollments and profile (auth user deletion requires service role key)
+  await supabase.from('enrollments').delete().eq('student_id', userId);
+  const { error } = await supabase.from('profiles').delete().eq('id', userId);
+  if (error) return { error: error.message };
+  revalidatePath('/admin/users');
   return { success: true };
 }

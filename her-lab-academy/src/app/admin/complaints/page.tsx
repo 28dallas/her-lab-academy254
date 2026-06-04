@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import AdminComplaintsClient from './AdminComplaintsClient';
+import AdminComplaintsClient, { type ComplaintRow } from './AdminComplaintsClient';
 
 export default async function AdminComplaintsPage() {
   const supabase = await createClient();
@@ -26,5 +26,5 @@ export default async function AdminComplaintsPage() {
     )
     .order('created_at', { ascending: false });
 
-  return <AdminComplaintsClient complaints={(complaints as any) ?? []} />;
+  return <AdminComplaintsClient complaints={(complaints as unknown as ComplaintRow[]) ?? []} />;
 }

@@ -1,5 +1,6 @@
 export type PublicCourse = {
   id: string;
+  slug: string;
   title: string;
   category: string;
   icon: string;
@@ -17,6 +18,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   Technology: 'bg-blue-50 text-blue-600',
   Business: 'bg-amber-50 text-amber-600',
 };
+
+export function slugifyCourseTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 export function categoryColor(category: string | null): string {
   return CATEGORY_COLORS[category ?? ''] ?? 'bg-gray-50 text-gray-600';
@@ -39,6 +48,7 @@ export function mapCourseRow(row: {
   const category = row.category ?? 'General';
   return {
     id: row.id,
+    slug: slugifyCourseTitle(row.title),
     title: row.title,
     category,
     icon: row.cover_emoji ?? '📚',

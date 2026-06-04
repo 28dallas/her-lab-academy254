@@ -17,10 +17,16 @@ export default async function AdminUsersPage() {
 
   if (profile?.role !== 'admin') redirect('/dashboard');
 
-  const { data: users } = await supabase
-    .from('profiles')
-    .select('id, full_name, email, role, created_at')
-    .order('created_at', { ascending: false });
+  const [{ data: users }, { data: courses }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, full_name, email, student_code, role, created_at')
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('courses')
+      .select('id, title')
+      .order('title', { ascending: true }),
+  ]);
 
-  return <AdminUsersClient users={users ?? []} />;
+  return <AdminUsersClient users={users ?? []} courses={courses ?? []} />;
 }

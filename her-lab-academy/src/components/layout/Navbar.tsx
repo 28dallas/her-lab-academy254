@@ -4,9 +4,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brand/Logo";
 import { BRAND_NAME } from "@/lib/brand";
-import { LogOut, Menu } from "lucide-react";
+import { LogOut, Menu, Languages } from "lucide-react";
 import { AvatarFallback } from "@/components/ui/AvatarFallback";
 import { useState } from "react";
+import { LangProvider, useLang } from "@/lib/i18n";
+
+function StudentLangToggle() {
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { t, toggle } = useLang();
+    return (
+      <button
+        type="button"
+        onClick={toggle}
+        className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] border border-[var(--color-border)] px-2.5 py-1.5 rounded-lg transition-colors"
+      >
+        <Languages className="w-3.5 h-3.5" />
+        {t('langToggle')}
+      </button>
+    );
+  } catch {
+    return null;
+  }
+}
 
 interface NavbarProps {
   user?: {
@@ -63,6 +83,7 @@ export function Navbar({ user, role }: NavbarProps) {
 
             {user && (
               <div className="flex items-center gap-3">
+                {role === 'student' && <StudentLangToggle />}
                 <Link
                   href={role === 'admin' ? '/admin' : role === 'teacher' ? '/teacher' : '/dashboard'}
                   className={navLink}

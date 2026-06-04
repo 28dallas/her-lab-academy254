@@ -6,19 +6,21 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, full_name, role)
+  insert into public.profiles (id, email, full_name, role, student_code)
   values (
     new.id,
     new.email,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    'student'
+    'student',
+    nullif(trim(new.raw_user_meta_data->>'student_code'), '')
   )
   on conflict (id) do update set
     email = excluded.email,
     full_name = case
       when excluded.full_name is not null and excluded.full_name <> '' then excluded.full_name
       else profiles.full_name
-    end;
+    end,
+    student_code = coalesce(nullif(trim(excluded.student_code), ''), profiles.student_code);
   return new;
 end;
 $$;

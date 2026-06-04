@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Users, MessageSquare, Award, BookOpen, ChevronRight } from 'lucide-react';
+import { MessageSquare, Award, BookOpen, ChevronRight } from 'lucide-react';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function StudentCourseHome({

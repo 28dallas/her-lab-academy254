@@ -80,13 +80,13 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
       <div className="mb-6">
         <p className="text-sm text-[var(--color-text-muted)]">
           Showing <span className="font-semibold text-[var(--color-text)]">{filteredCourses.length}</span>{' '}
-          published program{filteredCourses.length !== 1 ? 's' : ''}
+          program{filteredCourses.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {courses.length === 0 ? (
         <div className="text-center py-20 panel">
-          <h3 className="text-lg font-medium text-[var(--color-text)]">No published programs yet</h3>
+          <h3 className="text-lg font-medium text-[var(--color-text)]">No programs yet</h3>
           <p className="mt-1 text-[var(--color-text-muted)]">Check back soon — new courses are added regularly.</p>
         </div>
       ) : filteredCourses.length === 0 ? (
@@ -115,7 +115,7 @@ export default function CoursesCatalogClient({ courses }: { courses: PublicCours
           {filteredCourses.map((course) => (
             <Link
               key={course.id}
-              href={`/courses/${course.id}`}
+              href={`/courses/${course.slug}`}
               className={`group panel overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl hover:shadow-black/20 transition-all ${
                 viewMode === 'list' ? 'flex flex-row items-center h-32' : 'flex flex-col'
               }`}

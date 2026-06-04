@@ -15,6 +15,38 @@ import {
 import { createClient } from '@/utils/supabase/client';
 import { markResourceViewed } from '@/app/actions/student';
 
+function getYoutubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtube.com')) return u.searchParams.get('v');
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+  } catch { /* ignore */ }
+  return null;
+}
+
+function VideoEmbed({ url }: { url: string }) {
+  const ytId = getYoutubeId(url);
+  if (ytId) {
+    return (
+      <div className="aspect-video w-full">
+        <iframe
+          src={`https://www.youtube.com/embed/${ytId}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full rounded-b-xl"
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="px-5 pb-5">
+      <video controls className="w-full rounded-lg" src={url}>
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+}
+
 interface Resource {
   id: string;
   type: 'pdf' | 'video' | 'doc' | 'link' | 'image' | 'text';
@@ -210,7 +242,7 @@ export default function ModuleDetailPage({
                     )}
                   </div>
                 </div>
-                {res.type === 'text' ? (
+                {res.type === 'text' || res.type === 'video' ? (
                   <button
                     onClick={() => {
                       setExpandedText(expandedText === res.id ? null : res.id);
@@ -218,7 +250,7 @@ export default function ModuleDetailPage({
                     }}
                     className="flex-shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                   >
-                    {expandedText === res.id ? 'Collapse' : 'Read'}
+                    {expandedText === res.id ? 'Collapse' : res.type === 'video' ? 'Watch' : 'Read'}
                   </button>
                 ) : res.url ? (
                   <a
@@ -228,18 +260,19 @@ export default function ModuleDetailPage({
                     onClick={() => !res.viewed && handleMarkViewed(res.id)}
                     className="flex-shrink-0 flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
                   >
-                    {res.type === 'link' || res.type === 'video' ? (
-                      <>
-                        <ExternalLink className="w-3.5 h-3.5" /> Open
-                      </>
+                    {res.type === 'link' ? (
+                      <><ExternalLink className="w-3.5 h-3.5" /> Open</>
                     ) : (
-                      <>
-                        <Download className="w-3.5 h-3.5" /> View
-                      </>
+                      <><Download className="w-3.5 h-3.5" /> View</>
                     )}
                   </a>
                 ) : null}
               </div>
+              {res.type === 'video' && expandedText === res.id && res.url && (
+                <div className="border-t border-gray-100">
+                  <VideoEmbed url={res.url} />
+                </div>
+              )}
               {res.type === 'text' && expandedText === res.id && (
                 <div className="border-t border-gray-100 px-5 py-4 bg-[var(--color-accent)]">
                   <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">

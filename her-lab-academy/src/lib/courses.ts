@@ -1,5 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
-import { mapCourseRow, type PublicCourse } from './courseDisplay';
+import { mapCourseRow, slugifyCourseTitle, type PublicCourse } from './courseDisplay';
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function getPublishedCourses(): Promise<PublicCourse[]> {
   const supabase = await createClient();
@@ -12,24 +15,40 @@ export async function getPublishedCourses(): Promise<PublicCourse[]> {
   return (data ?? []).map(mapCourseRow);
 }
 
-export async function getPublishedCourseById(id: string) {
+export async function getPublishedCourseById(idOrSlug: string) {
   const supabase = await createClient();
+  const selectColumns =
+    'id, title, description, category, cover_emoji, cover_image_url, duration_weeks';
 
-  // Route param should be a UUID, but validate loosely to avoid false negatives.
-  // (If id isn't a UUID, Supabase will just return no rows.)
-  const { data: course } = await supabase
-    .from('courses')
-    .select('id, title, description, category, cover_emoji, cover_image_url, duration_weeks')
-    .eq('id', id)
-    .eq('is_published', true)
-    .maybeSingle();
+  let course = null;
+
+  if (UUID_PATTERN.test(idOrSlug)) {
+    const { data } = await supabase
+      .from('courses')
+      .select(selectColumns)
+      .eq('id', idOrSlug)
+      .eq('is_published', true)
+      .maybeSingle();
+    course = data;
+  }
+
+  if (!course) {
+    const { data } = await supabase
+      .from('courses')
+      .select(selectColumns)
+      .eq('is_published', true);
+
+    course =
+      (data ?? []).find((row) => slugifyCourseTitle(row.title) === idOrSlug) ??
+      null;
+  }
 
   if (!course) return null;
 
   const { data: modules } = await supabase
     .from('course_modules')
     .select('id, title, order_index')
-    .eq('course_id', id)
+    .eq('course_id', course.id)
     .order('order_index', { ascending: true });
 
   const moduleList = modules ?? [];
@@ -59,6 +78,7 @@ export async function getPublishedCourseCount(): Promise<number> {
     .from('courses')
     .select('*', { count: 'exact', head: true })
     .eq('is_published', true);
+
   return count ?? 0;
 }
 

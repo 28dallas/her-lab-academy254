@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Bell, Plus, CheckCircle2 } from 'lucide-react';
+import { Bell, Plus, CheckCircle2, Trash2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
-import { postPlatformNotice } from '@/app/actions/admin';
+import { postPlatformNotice, deleteNotice } from '@/app/actions/admin';
 
 interface Notice {
   id: string;
@@ -120,16 +120,33 @@ export default function AdminNoticesPage() {
         <div className="space-y-4">
           {notices.map((n) => (
             <div key={n.id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-              <p className="text-xs text-[var(--color-primary)] font-semibold mb-2">
-                {n.created_at
-                  ? new Date(n.created_at).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })
-                  : ''}
-              </p>
-              <p className="text-sm text-gray-800 whitespace-pre-wrap">{n.content}</p>
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex-1">
+                  <p className="text-xs text-[var(--color-primary)] font-semibold mb-2">
+                    {n.created_at
+                      ? new Date(n.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : ''}
+                  </p>
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap">{n.content}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!confirm('Delete this notice?')) return;
+                    const fd = new FormData();
+                    fd.set('noticeId', n.id);
+                    await deleteNotice(fd);
+                    setNotices((prev) => prev.filter((x) => x.id !== n.id));
+                  }}
+                  className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

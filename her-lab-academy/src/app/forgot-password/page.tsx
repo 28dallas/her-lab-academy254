@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
           </p>
           <p className="font-semibold text-gray-900 mb-6">{email}</p>
           <p className="text-sm text-gray-500 mb-8">
-            Click the link in the email to set a new password. If you don't see it, check your spam folder.
+            Click the link in the email to set a new password. If you don&apos;t see it, check your spam folder.
           </p>
           <Link
             href="/login"
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
           </div>
           <h2 className="text-2xl font-display font-bold text-[var(--color-text-dark)]">Forgot your password?</h2>
           <p className="text-sm text-gray-600 mt-2">
-            Enter your email and we'll send you a reset link.
+            Enter your email and we&apos;ll send you a reset link.
           </p>
         </div>
 
