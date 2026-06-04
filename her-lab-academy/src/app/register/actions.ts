@@ -10,7 +10,7 @@ export async function register(formData: FormData) {
 
     const fullName = (formData.get('fullName') as string)?.trim();
     const password = (formData.get('password') as string) || '';
-    const studentId = (formData.get('studentId') as string)?.trim().toUpperCase();
+    const studentId = (formData.get('studentId') as string)?.trim();
     const courseId = formData.get('courseId') as string;
     const emailInput = (formData.get('email') as string)?.trim().toLowerCase() || '';
     const phone = (formData.get('phone') as string)?.trim() || null;
@@ -19,11 +19,7 @@ export async function register(formData: FormData) {
       redirect('/register?error=' + encodeURIComponent('Name, password, student ID, and course are required'));
     }
 
-    if (!/^[A-Z0-9_-]{4,20}$/.test(studentId)) {
-      redirect('/register?error=' + encodeURIComponent('Invalid student ID format'));
-    }
-
-    const email = emailInput || `${studentId.toLowerCase()}@student.herlab.local`;
+    const email = emailInput || `${studentId.toLowerCase().replace(/[^a-z0-9]/g, '')}@student.herlab.local`;
 
     const studentQuery = supabase.from('profiles').select('id');
     if (emailInput) {

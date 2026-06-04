@@ -96,7 +96,7 @@ export default function AdminComplaintsClient({
       )}
 
       {complaints.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-xl py-16 text-center">
+        <div className="bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-xl py-16 text-center">
           <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500">No complaints submitted yet.</p>
         </div>
@@ -109,7 +109,7 @@ export default function AdminComplaintsClient({
             return (
               <div
                 key={c.id}
-                className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+                className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-sm overflow-hidden"
               >
                 <button
                   type="button"
@@ -149,7 +149,7 @@ export default function AdminComplaintsClient({
 
                 {expanded && (
                   <div className="px-6 pb-6 border-t border-gray-100">
-                    <p className="mt-4 text-sm text-gray-700 whitespace-pre-wrap">{c.message}</p>
+                    <p className="mt-4 text-sm text-[var(--color-text)] whitespace-pre-wrap">{c.message}</p>
 
                     {c.complaint_replies?.length > 0 && (
                       <div className="mt-4 space-y-3">
@@ -192,7 +192,7 @@ export default function AdminComplaintsClient({
                           setReplyText((prev) => ({ ...prev, [c.id]: e.target.value }))
                         }
                         placeholder="Write your reply to the student..."
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--color-primary)] outline-none resize-y"
+                        className="w-full border border-[var(--color-border)] rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--color-primary)] outline-none resize-y"
                       />
                       <button
                         type="button"

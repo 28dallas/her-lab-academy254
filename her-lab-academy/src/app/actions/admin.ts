@@ -144,16 +144,12 @@ export async function createStudent(formData: FormData) {
 
   const fullName = (formData.get('fullName') as string)?.trim();
   const email = (formData.get('email') as string)?.trim().toLowerCase();
-  const studentId = (formData.get('studentId') as string)?.trim().toUpperCase();
+  const studentId = (formData.get('studentId') as string)?.trim();
   const courseId = formData.get('courseId') as string;
   const phone = (formData.get('phone') as string)?.trim() || null;
 
   if (!fullName || !email || !studentId || !courseId) {
     return { error: 'Name, email, student ID and course are required.' };
-  }
-
-  if (!/^[A-Z0-9_-]{4,20}$/.test(studentId)) {
-    return { error: 'Student ID must be 4-20 characters and use letters, numbers, underscores or hyphens.' };
   }
 
   const { data: existingStudent } = await supabase

@@ -54,40 +54,40 @@ export default async function TeacherDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
-          { label: 'My Courses', value: courseList.length, icon: BookOpen, color: 'bg-orange-50 text-orange-600' },
-          { label: 'Total Students', value: totalStudents, icon: Users, color: 'bg-blue-50 text-blue-600' },
-          { label: 'Avg. Progress', value: `${avgProgress}%`, icon: TrendingUp, color: 'bg-green-50 text-green-600' },
+          { label: 'My Courses', value: courseList.length, icon: BookOpen, color: 'bg-orange-500/10 text-orange-400' },
+          { label: 'Total Students', value: totalStudents, icon: Users, color: 'bg-blue-500/10 text-blue-400' },
+          { label: 'Avg. Progress', value: `${avgProgress}%`, icon: TrendingUp, color: 'bg-green-500/10 text-green-400' },
         ].map(s => (
-          <div key={s.label} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+          <div key={s.label} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-sm p-6">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${s.color}`}>
               <s.icon className="w-6 h-6" />
             </div>
             <div className="text-3xl font-display font-bold text-[var(--color-text-dark)]">{s.value}</div>
-            <div className="text-sm text-gray-600 mt-1">{s.label}</div>
+            <div className="text-sm text-[var(--color-text-muted)] mt-1">{s.label}</div>
           </div>
         ))}
       </div>
 
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">My Courses</h2>
+        <h2 className="text-xl font-bold text-[var(--color-text-dark)] mb-4">My Courses</h2>
         {coursesWithStats.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-dashed border-gray-200 rounded-xl">
-            <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">No courses assigned yet.</p>
-            <p className="text-gray-400 text-sm mt-1">Contact your admin to get courses assigned to you.</p>
+          <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-xl">
+            <BookOpen className="w-12 h-12 text-[var(--color-text-muted)] mx-auto mb-3 opacity-40" />
+            <p className="text-[var(--color-text-muted)] font-medium">No courses assigned yet.</p>
+            <p className="text-[var(--color-text-muted)] text-sm mt-1 opacity-60">Contact your admin to get courses assigned to you.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {coursesWithStats.map(course => (
-              <div key={course.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+              <div key={course.id} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-sm p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gray-50">
                       {course.cover_emoji ?? '📚'}
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{course.title}</h3>
-                      <p className="text-sm text-gray-500">{course.students} students · {course.avgProgress}% avg progress</p>
+                      <h3 className="font-bold text-[var(--color-text-dark)]">{course.title}</h3>
+                      <p className="text-sm text-[var(--color-text-muted)]">{course.students} students · {course.avgProgress}% avg progress</p>
                     </div>
                   </div>
                   <Link href={`/teacher/course/${course.id}`} className="flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline">
@@ -95,7 +95,7 @@ export default async function TeacherDashboard() {
                   </Link>
                 </div>
                 <div className="mt-4">
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full bg-[var(--color-border)] rounded-full h-2">
                     <div className="h-2 rounded-full bg-[var(--color-primary)]" style={{ width: `${course.avgProgress}%` }} />
                   </div>
                 </div>

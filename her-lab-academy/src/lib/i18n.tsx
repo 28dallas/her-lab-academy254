@@ -67,17 +67,19 @@ const LangContext = createContext<{
   lang: Lang;
   t: (key: TranslationKeys) => string;
   toggle: () => void;
+  active: boolean;
 }>({
   lang: 'en',
   t: (k) => translations.en[k],
   toggle: () => {},
+  active: false,
 });
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>('en');
   const t = (key: TranslationKeys) => translations[lang][key] ?? translations.en[key];
   const toggle = () => setLang((l) => (l === 'en' ? 'sw' : 'en'));
-  return <LangContext.Provider value={{ lang, t, toggle }}>{children}</LangContext.Provider>;
+  return <LangContext.Provider value={{ lang, t, toggle, active: true }}>{children}</LangContext.Provider>;
 }
 
 export function useLang() {

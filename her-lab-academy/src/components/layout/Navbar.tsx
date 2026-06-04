@@ -7,25 +7,21 @@ import { BRAND_NAME } from "@/lib/brand";
 import { LogOut, Menu, Languages } from "lucide-react";
 import { AvatarFallback } from "@/components/ui/AvatarFallback";
 import { useState } from "react";
-import { LangProvider, useLang } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n";
 
 function StudentLangToggle() {
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { t, toggle } = useLang();
-    return (
-      <button
-        type="button"
-        onClick={toggle}
-        className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] border border-[var(--color-border)] px-2.5 py-1.5 rounded-lg transition-colors"
-      >
-        <Languages className="w-3.5 h-3.5" />
-        {t('langToggle')}
-      </button>
-    );
-  } catch {
-    return null;
-  }
+  const { t, toggle, active } = useLang();
+  if (!active) return null;
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] border border-[var(--color-border)] px-2.5 py-1.5 rounded-lg transition-colors"
+    >
+      <Languages className="w-3.5 h-3.5" />
+      {t('langToggle')}
+    </button>
+  );
 }
 
 interface NavbarProps {

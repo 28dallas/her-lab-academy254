@@ -37,7 +37,7 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
         <form className="mt-8 space-y-6" action={register}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="full-name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="full-name" className="block text-sm font-medium text-[var(--color-text-muted)]">
                 Full Name
               </label>
               <input
@@ -45,20 +45,20 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
                 name="fullName"
                 type="text"
                 required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                 placeholder="Jane Doe"
               />
             </div>
 
             <div>
-              <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="course" className="block text-sm font-medium text-[var(--color-text-muted)]">
                 Course
               </label>
               <select
                 id="course"
                 name="courseId"
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] px-3 py-2 focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
               >
                 <option value="">Select a course</option>
                 {courses.map((course) => (
@@ -70,7 +70,7 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
             </div>
 
             <div>
-              <label htmlFor="student-id" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="student-id" className="block text-sm font-medium text-[var(--color-text-muted)]">
                 Student ID
               </label>
               <input
@@ -78,40 +78,40 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
                 name="studentId"
                 type="text"
                 required
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm uppercase"
-                placeholder="e.g. HER00123"
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                placeholder="e.g. 02400004/ICT/4/2026/019"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address <span className="text-gray-400">(optional)</span>
+              <label htmlFor="email" className="block text-sm font-medium text-[var(--color-text-muted)]">
+                Email address <span className="opacity-50">(optional)</span>
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                 placeholder="student@example.com"
               />
-              <p className="text-xs text-gray-500 mt-1">If you don't have an email, leave this blank and use your Student ID to log in.</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">If you don't have an email, leave blank and use your Student ID to log in.</p>
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone number <span className="text-gray-400">(optional)</span>
+              <label htmlFor="phone" className="block text-sm font-medium text-[var(--color-text-muted)]">
+                Phone number <span className="opacity-50">(optional)</span>
               </label>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                className="mt-1 appearance-none block w-full px-3 py-2 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                 placeholder="e.g. 0712345678"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-[var(--color-text-muted)]">
                 Password
               </label>
               <div className="relative mt-1">
@@ -121,7 +121,7 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
                   type={showPassword ? 'text' : 'password'}
                   required
                   minLength={6}
-                  className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 pr-10 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                   placeholder="Minimum 6 characters"
                 />
                 <button
