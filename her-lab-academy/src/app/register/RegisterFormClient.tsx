@@ -90,11 +90,15 @@ export default function RegisterFormClient({ courses }: { courses: CourseOption[
               <input
                 id="email"
                 name="email"
-                type="email"
+                type="text"
+                autoComplete="email"
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-[var(--color-border)] rounded-md focus:outline-none focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] sm:text-sm"
                 placeholder="student@example.com"
               />
-              <p className="text-xs text-[var(--color-text-muted)] mt-1">If you don't have an email, leave blank and use your Student ID to log in.</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">
+                Optional. Leave blank if you do not have one — you can always sign in with your Student ID and password.
+                If you add an email, you may sign in with either your Student ID or that email.
+              </p>
             </div>
 
             <div>

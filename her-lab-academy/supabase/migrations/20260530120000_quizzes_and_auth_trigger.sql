@@ -1,3 +1,7 @@
+-- Student ID used for login (must exist before handle_new_user references it)
+alter table profiles
+  add column if not exists student_code text unique;
+
 -- Auto-create profile when user signs up
 create or replace function public.handle_new_user()
 returns trigger

@@ -3,30 +3,42 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { normalizeLoginIdentifier } from '@/lib/studentAccount';
 
 export async function login(formData: FormData) {
   try {
     const supabase = await createClient();
 
-    const studentId = (formData.get('studentId') as string)?.trim();
+    const identifier = normalizeLoginIdentifier((formData.get('studentId') as string) || '');
     const password = formData.get('password') as string;
 
-    if (!studentId) {
+    if (!identifier) {
       redirect('/login?error=' + encodeURIComponent('Student ID or email is required'));
     }
 
-    let email = studentId;
-    if (!studentId.includes('@')) {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .or(`student_code.eq.${studentId},id.eq.${studentId}`)
-        .maybeSingle();
+    if (!password) {
+      redirect('/login?error=' + encodeURIComponent('Password is required'));
+    }
 
-      if (profileError || !profile?.email) {
-        redirect('/login?error=' + encodeURIComponent('Invalid student ID or email'));
-      }
-      email = profile.email;
+    const { data: resolvedEmail, error: resolveError } = await supabase.rpc('resolve_login_email', {
+      identifier,
+    });
+
+    if (resolveError) {
+      redirect(
+        '/login?error=' +
+          encodeURIComponent(
+            resolveError.message.includes('resolve_login_email')
+              ? 'Login lookup is not configured. Ask an admin to run the latest Supabase migrations.'
+              : resolveError.message
+          )
+      );
+    }
+
+    const email = typeof resolvedEmail === 'string' ? resolvedEmail.trim() : '';
+
+    if (!email) {
+      redirect('/login?error=' + encodeURIComponent('Invalid student ID or email'));
     }
 
     const { data: signInData, error } = await supabase.auth.signInWithPassword({
@@ -58,4 +70,3 @@ export async function login(formData: FormData) {
     redirect('/login?error=' + encodeURIComponent(message));
   }
 }
-

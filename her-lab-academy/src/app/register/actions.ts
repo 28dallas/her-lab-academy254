@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { normalizeStudentCode, resolveStudentEmail } from '@/lib/studentAccount';
 
 export async function register(formData: FormData) {
   try {
@@ -10,7 +11,7 @@ export async function register(formData: FormData) {
 
     const fullName = (formData.get('fullName') as string)?.trim();
     const password = (formData.get('password') as string) || '';
-    const studentId = (formData.get('studentId') as string)?.trim();
+    const studentId = normalizeStudentCode((formData.get('studentId') as string) || '');
     const courseId = formData.get('courseId') as string;
     const emailInput = (formData.get('email') as string)?.trim().toLowerCase() || '';
     const phone = (formData.get('phone') as string)?.trim() || null;
@@ -19,7 +20,7 @@ export async function register(formData: FormData) {
       redirect('/register?error=' + encodeURIComponent('Name, password, student ID, and course are required'));
     }
 
-    const email = emailInput || `${studentId.toLowerCase().replace(/[^a-z0-9]/g, '')}@student.herlab.local`;
+    const email = resolveStudentEmail(studentId, emailInput);
 
     const studentQuery = supabase.from('profiles').select('id');
     if (emailInput) {
@@ -74,7 +75,10 @@ export async function register(formData: FormData) {
     }
 
     revalidatePath('/', 'layout');
-    redirect('/login?success=' + encodeURIComponent('Account created. Log in with your Student ID and password.'));
+    const loginHint = emailInput
+      ? 'Account created. Log in with your Student ID or email and your password.'
+      : 'Account created. Log in with your Student ID and password (email was optional).';
+    redirect('/login?success=' + encodeURIComponent(loginHint));
   } catch (e) {
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') {
       throw e;

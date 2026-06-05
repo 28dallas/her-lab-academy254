@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { normalizeStudentCode, resolveStudentEmail } from '@/lib/studentAccount';
 
 type StudentRow = {
   full_name?: string;
@@ -8,21 +9,45 @@ type StudentRow = {
   phone?: string;
 };
 
-function normalizeEmail(value: unknown) {
-  return typeof value === 'string' ? value.trim().toLowerCase() : '';
-}
+async function enrollStudent(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  studentId: string,
+  courseId: string
+): Promise<{ ok: boolean; already: boolean; error?: string }> {
+  const { data: existing } = await supabase
+    .from('enrollments')
+    .select('id')
+    .eq('student_id', studentId)
+    .eq('course_id', courseId)
+    .maybeSingle();
 
-function normalizeStudentCode(value: unknown) {
-  return typeof value === 'string' ? value.trim().toUpperCase() : '';
+  if (existing) return { ok: true, already: true };
+
+  const { error } = await supabase.from('enrollments').insert({
+    student_id: studentId,
+    course_id: courseId,
+  });
+
+  if (error) {
+    if (error.code === '23505') return { ok: true, already: true };
+    return { ok: false, already: false, error: error.message };
+  }
+
+  return { ok: true, already: false };
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const students = Array.isArray(body.students) ? body.students : [];
+    const students = Array.isArray(body.students) ? (body.students as StudentRow[]) : [];
+    const courseId = typeof body.courseId === 'string' ? body.courseId.trim() : '';
 
     if (students.length === 0) {
       return NextResponse.json({ error: 'No students provided' }, { status: 400 });
+    }
+
+    if (!courseId) {
+      return NextResponse.json({ error: 'courseId is required for bulk import' }, { status: 400 });
     }
 
     const supabase = await createClient();
@@ -44,19 +69,100 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const { data: course, error: courseError } = await supabase
+      .from('courses')
+      .select('id, title')
+      .eq('id', courseId)
+      .maybeSingle();
+
+    if (courseError || !course) {
+      return NextResponse.json({ error: 'Course not found' }, { status: 400 });
+    }
+
     let created = 0;
+    let enrolled = 0;
     let skipped = 0;
     const errors: string[] = [];
 
     for (const rawItem of students) {
-      const email = normalizeEmail(rawItem.email);
-      const student_code = normalizeStudentCode(rawItem.student_code);
+      const student_code = normalizeStudentCode(
+        typeof rawItem.student_code === 'string' ? rawItem.student_code : ''
+      );
       const full_name = typeof rawItem.full_name === 'string' ? rawItem.full_name.trim() : '';
-      const phone = typeof rawItem.phone === 'string' && rawItem.phone.trim() ? rawItem.phone.trim() : null;
+      const phone =
+        typeof rawItem.phone === 'string' && rawItem.phone.trim() ? rawItem.phone.trim() : null;
+      const email = resolveStudentEmail(
+        student_code,
+        typeof rawItem.email === 'string' ? rawItem.email : ''
+      );
 
-      if (!email || !student_code) {
+      const label = full_name || student_code || 'unknown row';
+
+      if (!full_name || !student_code) {
         skipped += 1;
-        errors.push(`Missing required fields for row: ${JSON.stringify(rawItem)}`);
+        errors.push(`${label}: missing full_name or student_code`);
+        continue;
+      }
+
+      if (!email) {
+        skipped += 1;
+        errors.push(`${label}: could not derive email from student ID`);
+        continue;
+      }
+
+      const { data: byCode } = await supabase
+        .from('profiles')
+        .select('id, student_code, email')
+        .eq('student_code', student_code)
+        .maybeSingle();
+
+      let userId = byCode?.id;
+
+      if (!userId) {
+        const { data: byEmail } = await supabase
+          .from('profiles')
+          .select('id, student_code')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (byEmail) {
+          if (byEmail.student_code && byEmail.student_code !== student_code) {
+            skipped += 1;
+            errors.push(`${label}: email already used by another student ID`);
+            continue;
+          }
+          userId = byEmail.id;
+        }
+      }
+
+      if (userId) {
+        const { error: profileError } = await supabase.from('profiles').upsert(
+          {
+            id: userId,
+            email,
+            full_name,
+            student_code,
+            role: 'student',
+            ...(phone ? { phone } : {}),
+          },
+          { onConflict: 'id' }
+        );
+
+        if (profileError) {
+          skipped += 1;
+          errors.push(`${label}: ${profileError.message}`);
+          continue;
+        }
+
+        const enrollment = await enrollStudent(supabase, userId, courseId);
+        if (!enrollment.ok) {
+          skipped += 1;
+          errors.push(`${label}: ${enrollment.error}`);
+          continue;
+        }
+
+        if (!enrollment.already) enrolled += 1;
+        else skipped += 1;
         continue;
       }
 
@@ -75,25 +181,57 @@ export async function POST(request: Request) {
 
       if (authError) {
         const message = authError.message ?? 'Sign up failed';
-        if (message.toLowerCase().includes('already registered') || message.toLowerCase().includes('user already registered')) {
-          skipped += 1;
-          continue;
+        const alreadyRegistered =
+          message.toLowerCase().includes('already registered') ||
+          message.toLowerCase().includes('user already registered');
+
+        if (alreadyRegistered) {
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id, student_code')
+            .eq('email', email)
+            .maybeSingle();
+
+          if (existingProfile?.id) {
+            userId = existingProfile.id;
+            await supabase.from('profiles').upsert(
+              {
+                id: userId,
+                email,
+                full_name,
+                student_code,
+                role: 'student',
+                ...(phone ? { phone } : {}),
+              },
+              { onConflict: 'id' }
+            );
+            const enrollment = await enrollStudent(supabase, userId, courseId);
+            if (enrollment.ok && !enrollment.already) enrolled += 1;
+            else if (enrollment.ok) skipped += 1;
+            else {
+              skipped += 1;
+              errors.push(`${label}: ${enrollment.error}`);
+            }
+            continue;
+          }
         }
 
         skipped += 1;
-        errors.push(`${email}: ${message}`);
+        errors.push(`${label}: ${message}`);
         continue;
       }
 
       if (!authData.user?.id) {
         skipped += 1;
-        errors.push(`${email}: missing user id after sign up`);
+        errors.push(`${label}: missing user id after sign up`);
         continue;
       }
 
+      userId = authData.user.id;
+
       const { error: profileError } = await supabase.from('profiles').upsert(
         {
-          id: authData.user.id,
+          id: userId,
           email,
           full_name,
           student_code,
@@ -104,13 +242,29 @@ export async function POST(request: Request) {
       );
 
       if (profileError) {
-        errors.push(`${email}: ${profileError.message}`);
+        skipped += 1;
+        errors.push(`${label}: ${profileError.message}`);
+        continue;
+      }
+
+      const enrollment = await enrollStudent(supabase, userId, courseId);
+      if (!enrollment.ok) {
+        errors.push(`${label}: account created but enrollment failed — ${enrollment.error}`);
+        created += 1;
+        continue;
       }
 
       created += 1;
+      enrolled += 1;
     }
 
-    return NextResponse.json({ created, skipped, errors });
+    return NextResponse.json({
+      created,
+      enrolled,
+      skipped,
+      courseTitle: course.title,
+      errors,
+    });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Import failed' },

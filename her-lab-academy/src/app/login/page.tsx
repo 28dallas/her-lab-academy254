@@ -101,7 +101,7 @@ function LoginForm() {
         </form>
 
         <p className="text-xs text-[var(--color-text-muted)] text-center leading-relaxed">
-          After sign in you are redirected to your dashboard based on your account role.
+          Use your TVET registration number or the email on your account, plus your password.
         </p>
       </div>
     </div>

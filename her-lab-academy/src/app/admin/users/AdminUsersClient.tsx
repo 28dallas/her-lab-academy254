@@ -4,20 +4,7 @@ import React, { useRef, useState } from 'react';
 import { Users, UserCheck, Trash2 } from 'lucide-react';
 import { AvatarFallback } from '@/components/ui/AvatarFallback';
 import { createStudent, updateUserRole, sendAdminPasswordReset, deleteUser } from '@/app/actions/admin';
-
-function normalizeHeader(header: string) {
-  return header.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-}
-
-function parseCsv(text: string) {
-  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map((h) => normalizeHeader(h.replace(/^"|"$/g, '')));
-  return lines.slice(1).map((line) => {
-    const values = Array.from(line.match(/"[^"]*"|[^,]+/g) || []).map((v) => v.trim().replace(/^"|"$/g, ''));
-    return headers.reduce<Record<string, string>>((acc, h, i) => { acc[h] = values[i]?.trim() ?? ''; return acc; }, {});
-  });
-}
+import { parseStudentCsv } from '@/lib/importStudentsCsv';
 
 export interface CourseOption { id: string; title: string; }
 export interface UserRow { id: string; student_code?: string | null; full_name: string | null; email: string | null; role: string; created_at: string; }
@@ -35,6 +22,7 @@ export default function AdminUsersClient({ users: initialUsers, courses }: { use
   const [email, setEmail] = useState('');
   const [studentId, setStudentId] = useState('');
   const [courseId, setCourseId] = useState(courses[0]?.id ?? '');
+  const [importCourseId, setImportCourseId] = useState(courses[0]?.id ?? '');
   const [phone, setPhone] = useState('');
   const [savingStudent, setSavingStudent] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -76,22 +64,51 @@ export default function AdminUsersClient({ users: initialUsers, courses }: { use
 
   const handleCsvImport = async (file: File) => {
     setError(''); setSuccessMessage(''); setImporting(true);
+    if (!importCourseId) {
+      setError('Select a course before importing.');
+      setImporting(false);
+      return;
+    }
     const text = await file.text();
-    const rows = parseCsv(text);
-    if (rows.length === 0) { setError('Unable to parse CSV. Make sure it has a header row and at least one student.'); setImporting(false); return; }
-    const normalizedRows = rows.map((row) => ({
-      full_name: row.full_name || row.name || row.fullname || '',
-      email: row.email || row.email_address || '',
-      student_code: row.student_code || row.studentid || row.student_id || '',
-      phone: row.phone || row.phone_number || '',
-    }));
-    const response = await fetch('/api/admin/import-students', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ students: normalizedRows }) });
+    const rows = parseStudentCsv(text);
+    if (rows.length === 0) {
+      setError(
+        'Unable to parse CSV. Include columns for name and student ID (e.g. full_name + student_code, or CANDIDATE NAME + TVET CDACC REG. NO.).'
+      );
+      setImporting(false);
+      return;
+    }
+    const response = await fetch('/api/admin/import-students', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ courseId: importCourseId, students: rows }),
+    });
     const result = await response.json();
     setImporting(false);
     if (!response.ok) { setError(result.error || 'Student import failed.'); return; }
-    if (result.errors?.length) setError(`Imported ${result.created ?? 0}, skipped ${result.skipped ?? 0}. ${result.errors.join(' ')}`);
-    else setSuccessMessage(`Imported ${result.created ?? 0} students. ${result.skipped ?? 0} skipped.`);
-    if (result.created) window.location.reload();
+    const courseLabel = result.courseTitle ? ` into ${result.courseTitle}` : '';
+    const summary = `Created ${result.created ?? 0}, enrolled ${result.enrolled ?? 0}${courseLabel}. ${result.skipped ?? 0} skipped.`;
+    if (result.errors?.length) {
+      setError(`${summary} ${result.errors.slice(0, 5).join(' ')}${result.errors.length > 5 ? ' …' : ''}`);
+    } else {
+      setSuccessMessage(summary);
+    }
+    if ((result.created ?? 0) > 0 || (result.enrolled ?? 0) > 0) window.location.reload();
+  };
+
+  const downloadImportTemplate = () => {
+    const csv = `full_name,student_code,email,phone
+Jane Doe,02400004/ICT/4/2026/019,,
+John Example,02400004/ICT/4/2026/020,john@example.com,+254712345678
+`;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'her-lab-students-template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,15 +151,54 @@ export default function AdminUsersClient({ users: initialUsers, courses }: { use
             </button>
           </form>
         </div>
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-          <p className="text-sm text-[var(--color-text-muted)] mb-4">
-            Upload a CSV with columns: <span className="font-medium text-[var(--color-text)]">full_name, email, student_code</span>.
+        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-[var(--color-text-dark)]">Bulk import (one CSV per course)</h2>
+          <p className="text-sm text-[var(--color-text-muted)]">
+            Export your Excel register as CSV. Required columns:{' '}
+            <span className="font-medium text-[var(--color-text)]">name + student ID</span>{' '}
+            (e.g. <span className="font-mono text-xs">CANDIDATE NAME</span> and{' '}
+            <span className="font-mono text-xs">TVET CDACC REG. NO.</span>). Email is optional — a login email is generated from the student ID when blank.
           </p>
-          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={importing}
-            className="inline-flex items-center justify-center rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-primary-hover)] disabled:opacity-60">
-            {importing ? 'Importing…' : 'Import students CSV'}
-          </button>
+          <div>
+            <label className={lbl}>Enroll into course</label>
+            <select
+              value={importCourseId}
+              onChange={(e) => setImportCourseId(e.target.value)}
+              className={inp}
+              disabled={courses.length === 0}
+            >
+              {courses.length === 0 ? (
+                <option value="">No courses — create one first</option>
+              ) : (
+                courses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={importing || !importCourseId}
+              className="inline-flex items-center justify-center rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-primary-hover)] disabled:opacity-60"
+            >
+              {importing ? 'Importing…' : 'Import CSV'}
+            </button>
+            <button
+              type="button"
+              onClick={downloadImportTemplate}
+              className="inline-flex items-center justify-center rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]"
+            >
+              Download template
+            </button>
+          </div>
           <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
+          <p className="text-xs text-[var(--color-text-muted)]">
+            Students log in with their TVET registration number and a password they set via admin password reset or self-registration.
+          </p>
         </div>
       </div>
 

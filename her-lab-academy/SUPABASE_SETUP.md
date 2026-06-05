@@ -72,7 +72,35 @@ If you see errors like `constraint already exists`, some parts were applied befo
 2. Open `supabase/migrations/20260529130000_storage_and_certificates.sql`
 3. Copy all → **Run**
 
-### Step 4 — Create storage bucket (if Step 3 bucket insert failed)
+### Step 4 — Student ID column on profiles (required for registration)
+
+Registration and login use a `student_code` field on `profiles`. If sign-up fails with  
+`Could not find the 'student_code' column of 'profiles' in the schema cache`, run:
+
+1. SQL Editor → **New query**
+2. Open `supabase/migrations/20260604165000_add_student_code_to_profiles.sql`
+3. Copy all → **Run**
+
+Or paste:
+
+```sql
+alter table profiles
+  add column if not exists student_code text unique;
+```
+
+Then wait a few seconds (or reload the Supabase dashboard) so PostgREST refreshes its schema cache.
+
+Also run `supabase/migrations/20260530120000_quizzes_and_auth_trigger.sql` if you have not applied it yet (auth trigger + quizzes).
+
+### Step 4b — Student login by ID (required for ID + email sign-in)
+
+If students cannot log in with their TVET registration number, run:
+
+1. SQL Editor → **New query**
+2. Open `supabase/migrations/20260605183000_resolve_login_email.sql`
+3. Copy all → **Run**
+
+### Step 5 — Create storage bucket (if Step 3 bucket insert failed)
 
 1. **Storage** → **New bucket**
 2. Name: `certificates`
