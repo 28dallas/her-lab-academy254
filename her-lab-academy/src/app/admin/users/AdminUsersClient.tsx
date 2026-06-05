@@ -197,7 +197,8 @@ John Example,02400004/ICT/4/2026/020,john@example.com,+254712345678
           </div>
           <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
           <p className="text-xs text-[var(--color-text-muted)]">
-            Students log in with their TVET registration number and a password they set via admin password reset or self-registration.
+            Students log in with their TVET registration number (or email if provided) and password. Bulk import needs{' '}
+            <span className="font-mono">SUPABASE_SERVICE_ROLE_KEY</span> on the server (Vercel env).
           </p>
         </div>
       </div>

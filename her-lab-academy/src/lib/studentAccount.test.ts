@@ -9,7 +9,7 @@ import {
 describe('emailFromStudentCode', () => {
   it('strips slashes and builds local part', () => {
     expect(emailFromStudentCode('02400004/ICT/4/2026/019')).toBe(
-      '02400004ict42026019@student.herlab.local'
+      '02400004ict42026019@students.herlabacademy.app'
     );
   });
 });
@@ -38,7 +38,7 @@ describe('resolveStudentEmail', () => {
 
   it('falls back to generated email', () => {
     expect(resolveStudentEmail('02400004/ICT/4/2026/019', '')).toBe(
-      '02400004ict42026019@student.herlab.local'
+      '02400004ict42026019@students.herlabacademy.app'
     );
   });
 });

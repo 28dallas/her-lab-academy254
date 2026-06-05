@@ -8,11 +8,23 @@ const ID_HEADERS = new Set([
   'student_id',
   'studentid',
   'tvet_cdacc_reg_no',
+  'tvet_cdacc_reg',
   'tvet_reg_no',
   'reg_no',
   'registration_no',
   'cdacc_reg_no',
 ]);
+
+function pickStudentCode(row: Record<string, string>): string {
+  const direct = pickField(row, ID_HEADERS);
+  if (direct) return direct;
+  for (const [key, value] of Object.entries(row)) {
+    if (!value) continue;
+    if (key.includes('tvet') && key.includes('reg')) return value;
+    if (key.includes('cdacc') && key.includes('reg')) return value;
+  }
+  return '';
+}
 
 function splitCsvLine(line: string): string[] {
   return Array.from(line.match(/"[^"]*"|[^,]+/g) || []).map((v) => v.trim().replace(/^"|"$/g, ''));
@@ -35,7 +47,7 @@ function pickField(row: Record<string, string>, keys: Set<string>): string {
 export function normalizeImportRow(row: Record<string, string>) {
   return {
     full_name: pickField(row, NAME_HEADERS),
-    student_code: pickField(row, ID_HEADERS),
+    student_code: pickStudentCode(row),
     email: row.email || row.email_address || '',
     phone: row.phone || row.phone_number || '',
   };
@@ -49,7 +61,9 @@ export function parseStudentCsv(text: string): ReturnType<typeof normalizeImport
   for (let i = 0; i < lines.length; i++) {
     const headers = lines[i].split(',').map((h) => normalizeCsvHeader(h.replace(/^"|"$/g, '')));
     const hasName = headers.some((h) => NAME_HEADERS.has(h));
-    const hasId = headers.some((h) => ID_HEADERS.has(h));
+    const hasId =
+      headers.some((h) => ID_HEADERS.has(h)) ||
+      headers.some((h) => h.includes('tvet') && h.includes('reg'));
     if (!hasName || !hasId) continue;
 
     const rows: ReturnType<typeof normalizeImportRow>[] = [];

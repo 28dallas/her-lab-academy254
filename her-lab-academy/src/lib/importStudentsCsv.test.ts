@@ -12,6 +12,14 @@ Jane Doe,02400004/ICT/4/2026/019,
     expect(rows[0].student_code).toBe('02400004/ICT/4/2026/019');
   });
 
+  it('reads TVET CDACC REG column without NO suffix', () => {
+    const csv = `CANDIDATE NAME,TVET CDACC REG.
+Joyce Ayanae,02400004/ICT/4/2026/019
+`;
+    const rows = parseStudentCsv(csv);
+    expect(rows[0].student_code).toBe('02400004/ICT/4/2026/019');
+  });
+
   it('finds header after Excel preamble', () => {
     const csv = `Assessment Registrations
 Centre Name,POKOT TECHNICAL

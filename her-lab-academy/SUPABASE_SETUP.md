@@ -119,9 +119,21 @@ Create `her-lab-academy/.env.local`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-Find both under **Settings → API** (use the **anon** `public` key, not `service_role`).
+Find URL + anon key under **Settings → API** (use the **anon** `public` key for the app).  
+For **Admin → bulk CSV import**, add **service_role** as `SUPABASE_SERVICE_ROLE_KEY` in Vercel/local (server only — never expose to the browser).
+
+Optional — domain for auto-generated student emails when CSV has no email column:
+
+```env
+STUDENT_AUTH_EMAIL_DOMAIN=students.herlabacademy.app
+```
+
+(Supabase rejects `.local` addresses; do not use `@student.herlab.local`.)
+
+**Auth → Providers → Email:** consider disabling **Confirm email** for classroom rollouts so students can sign in immediately after import.
 
 Optional for teacher file uploads:
 

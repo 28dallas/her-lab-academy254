@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { normalizeStudentCode, resolveStudentEmail } from '@/lib/studentAccount';
 
 type StudentRow = {
@@ -10,7 +12,7 @@ type StudentRow = {
 };
 
 async function enrollStudent(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   studentId: string,
   courseId: string
 ): Promise<{ ok: boolean; already: boolean; error?: string }> {
@@ -36,6 +38,29 @@ async function enrollStudent(
   return { ok: true, already: false };
 }
 
+async function upsertStudentProfile(
+  supabase: SupabaseClient,
+  userId: string,
+  fields: {
+    email: string;
+    full_name: string;
+    student_code: string;
+    phone: string | null;
+  }
+) {
+  return supabase.from('profiles').upsert(
+    {
+      id: userId,
+      email: fields.email,
+      full_name: fields.full_name,
+      student_code: fields.student_code,
+      role: 'student',
+      ...(fields.phone ? { phone: fields.phone } : {}),
+    },
+    { onConflict: 'id' }
+  );
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -51,6 +76,18 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient();
+    const admin = createAdminClient();
+
+    if (!admin) {
+      return NextResponse.json(
+        {
+          error:
+            'Bulk import requires SUPABASE_SERVICE_ROLE_KEY in server environment variables (Vercel → Settings → Environment Variables).',
+        },
+        { status: 500 }
+      );
+    }
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -83,6 +120,7 @@ export async function POST(request: Request) {
     let enrolled = 0;
     let skipped = 0;
     const errors: string[] = [];
+    const db = admin;
 
     for (const rawItem of students) {
       const student_code = normalizeStudentCode(
@@ -110,7 +148,7 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const { data: byCode } = await supabase
+      const { data: byCode } = await db
         .from('profiles')
         .select('id, student_code, email')
         .eq('student_code', student_code)
@@ -119,7 +157,7 @@ export async function POST(request: Request) {
       let userId = byCode?.id;
 
       if (!userId) {
-        const { data: byEmail } = await supabase
+        const { data: byEmail } = await db
           .from('profiles')
           .select('id, student_code')
           .eq('email', email)
@@ -136,17 +174,12 @@ export async function POST(request: Request) {
       }
 
       if (userId) {
-        const { error: profileError } = await supabase.from('profiles').upsert(
-          {
-            id: userId,
-            email,
-            full_name,
-            student_code,
-            role: 'student',
-            ...(phone ? { phone } : {}),
-          },
-          { onConflict: 'id' }
-        );
+        const { error: profileError } = await upsertStudentProfile(db, userId, {
+          email,
+          full_name,
+          student_code,
+          phone,
+        });
 
         if (profileError) {
           skipped += 1;
@@ -154,7 +187,7 @@ export async function POST(request: Request) {
           continue;
         }
 
-        const enrollment = await enrollStudent(supabase, userId, courseId);
+        const enrollment = await enrollStudent(db, userId, courseId);
         if (!enrollment.ok) {
           skipped += 1;
           errors.push(`${label}: ${enrollment.error}`);
@@ -166,46 +199,31 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const password = crypto.randomUUID().slice(0, 16);
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const password = crypto.randomUUID().slice(0, 16) + 'Aa1!';
+      const { data: authData, error: authError } = await db.auth.admin.createUser({
         email,
         password,
-        options: {
-          data: {
-            full_name,
-            student_code,
-            role: 'student',
-          },
+        email_confirm: true,
+        user_metadata: {
+          full_name,
+          student_code,
+          role: 'student',
         },
       });
 
       if (authError) {
-        const message = authError.message ?? 'Sign up failed';
-        const alreadyRegistered =
-          message.toLowerCase().includes('already registered') ||
-          message.toLowerCase().includes('user already registered');
-
-        if (alreadyRegistered) {
-          const { data: existingProfile } = await supabase
+        const message = authError.message ?? 'Create user failed';
+        if (message.toLowerCase().includes('already') || message.toLowerCase().includes('registered')) {
+          const { data: existingProfile } = await db
             .from('profiles')
-            .select('id, student_code')
+            .select('id')
             .eq('email', email)
             .maybeSingle();
 
           if (existingProfile?.id) {
             userId = existingProfile.id;
-            await supabase.from('profiles').upsert(
-              {
-                id: userId,
-                email,
-                full_name,
-                student_code,
-                role: 'student',
-                ...(phone ? { phone } : {}),
-              },
-              { onConflict: 'id' }
-            );
-            const enrollment = await enrollStudent(supabase, userId, courseId);
+            await upsertStudentProfile(db, userId, { email, full_name, student_code, phone });
+            const enrollment = await enrollStudent(db, userId, courseId);
             if (enrollment.ok && !enrollment.already) enrolled += 1;
             else if (enrollment.ok) skipped += 1;
             else {
@@ -223,23 +241,18 @@ export async function POST(request: Request) {
 
       if (!authData.user?.id) {
         skipped += 1;
-        errors.push(`${label}: missing user id after sign up`);
+        errors.push(`${label}: missing user id after create`);
         continue;
       }
 
       userId = authData.user.id;
 
-      const { error: profileError } = await supabase.from('profiles').upsert(
-        {
-          id: userId,
-          email,
-          full_name,
-          student_code,
-          role: 'student',
-          ...(phone ? { phone } : {}),
-        },
-        { onConflict: 'id' }
-      );
+      const { error: profileError } = await upsertStudentProfile(db, userId, {
+        email,
+        full_name,
+        student_code,
+        phone,
+      });
 
       if (profileError) {
         skipped += 1;
@@ -247,7 +260,7 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const enrollment = await enrollStudent(supabase, userId, courseId);
+      const enrollment = await enrollStudent(db, userId, courseId);
       if (!enrollment.ok) {
         errors.push(`${label}: account created but enrollment failed — ${enrollment.error}`);
         created += 1;
