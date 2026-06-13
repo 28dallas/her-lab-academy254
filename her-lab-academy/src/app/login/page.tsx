@@ -20,7 +20,9 @@ function LoginForm() {
 
         <div className="text-center">
           <div className="flex justify-center mb-5">
-            <Logo size={80} variant="mark" priority />
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <Logo size={120} variant="mark" priority />
+            </Link>
           </div>
           <h2 className="text-3xl font-display font-bold text-[var(--color-text-dark)] tracking-tight">
             Welcome back
@@ -59,7 +61,7 @@ function LoginForm() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-[var(--color-text)] mb-1.5">
-              Password
+              Password <span className="opacity-50">(optional for first-time)</span>
             </label>
             <div className="relative">
               <input
@@ -67,7 +69,6 @@ function LoginForm() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                required
                 className="block w-full px-3.5 py-2.5 pr-10 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg-muted)] placeholder-[var(--color-text-muted)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)] sm:text-sm transition-shadow"
                 placeholder="Your password"
               />
@@ -101,7 +102,7 @@ function LoginForm() {
         </form>
 
         <p className="text-xs text-[var(--color-text-muted)] text-center leading-relaxed">
-          Use your TVET registration number or the email on your account, plus your password.
+          CSV students: Enter your Student ID only. You'll create a password on your first login.
         </p>
       </div>
     </div>

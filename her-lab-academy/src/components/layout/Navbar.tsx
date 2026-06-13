@@ -56,7 +56,7 @@ export function Navbar({ user, role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex items-center min-w-0 flex-1">
             <Link href="/" className="flex items-center gap-2 min-w-0">
-              <Logo size={56} priority className="shrink-0" />
+              <Logo size={72} priority className="shrink-0" />
               <span className="font-display font-bold text-sm sm:text-xl text-[var(--color-text-dark)] leading-tight truncate">
                 {BRAND_NAME}
               </span>
