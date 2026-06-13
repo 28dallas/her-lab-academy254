@@ -30,7 +30,7 @@ export async function setupPassword(formData: FormData) {
     if (!adminClient) {
       redirect(
         '/setup-password?error=' +
-          encodeURIComponent('Admin service role key is not configured in local environment.')
+          encodeURIComponent('Admin service role key is not configured in the server environment.')
       );
     }
 
