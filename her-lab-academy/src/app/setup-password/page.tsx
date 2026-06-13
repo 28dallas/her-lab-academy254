@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import Link from 'next/link';
@@ -140,6 +140,10 @@ function SetupPasswordForm() {
 }
 
 export default function SetupPasswordPage() {
-  return <SetupPasswordForm />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">Loading...</div>}>
+      <SetupPasswordForm />
+    </Suspense>
+  );
 }
 

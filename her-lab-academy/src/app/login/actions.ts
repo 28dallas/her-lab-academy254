@@ -32,48 +32,34 @@ export async function login(formData: FormData) {
       redirect('/login?error=' + encodeURIComponent('Student ID or email is required'));
     }
 
-    const { data: resolvedEmail, error: resolveError } = await supabase.rpc('resolve_login_email', {
+    const { data: statusData, error: statusError } = await supabase.rpc('get_student_login_status', {
       identifier,
     });
 
-    if (resolveError) {
+    if (statusError) {
       redirect(
         '/login?error=' +
           encodeURIComponent(
-            resolveError.message.includes('resolve_login_email')
+            statusError.message.includes('get_student_login_status')
               ? 'Login lookup is not configured. Ask an admin to run the latest Supabase migrations.'
-              : resolveError.message
+              : statusError.message
           )
       );
     }
 
-    const email = typeof resolvedEmail === 'string' ? resolvedEmail.trim() : '';
+    const loginStatus = statusData && statusData.length > 0 ? statusData[0] : null;
 
-    if (!email) {
-      redirect('/login?error=' + encodeURIComponent('Invalid student ID or email'));
-    }
-
-    // Check if student exists in profiles
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, role, student_code')
-      .or(`student_code.eq.${studentCode},student_code.ilike.%${studentCode}%`)
-      .maybeSingle();
-
-
-
-    if (!profile) {
+    if (!loginStatus) {
       redirect('/login?error=' + encodeURIComponent('Student ID not found'));
     }
 
+    const email = loginStatus.profile_email;
+    const role = loginStatus.profile_role;
+    const hasSignedIn = loginStatus.has_signed_in;
+
     // If no password provided, check if this is a first-time CSV student
     if (!password) {
-      // Check if they have an auth account
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-      
-      const hasAuthAccount = authUsers?.users?.some(u => u.email === email);
-
-      if (!hasAuthAccount) {
+      if (!hasSignedIn) {
         // CSV student - first time login - redirect to setup password
         redirect('/setup-password?student_id=' + encodeURIComponent(identifier));
       } else {
@@ -94,7 +80,6 @@ export async function login(formData: FormData) {
 
     revalidatePath('/', 'layout');
 
-    const role = profile.role;
     if (role === 'admin') redirect('/admin');
     if (role === 'teacher') redirect('/teacher');
     redirect('/dashboard');

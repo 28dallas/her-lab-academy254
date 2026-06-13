@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { normalizeStudentCode } from '@/lib/studentAccount';
 
 export async function setupPassword(formData: FormData) {
@@ -24,33 +25,51 @@ export async function setupPassword(formData: FormData) {
     }
 
     const supabase = await createClient();
+    const adminClient = createAdminClient();
 
-    // Get the student profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, full_name, role')
-      .eq('student_code', studentId)
-      .maybeSingle();
+    if (!adminClient) {
+      redirect(
+        '/setup-password?error=' +
+          encodeURIComponent('Admin service role key is not configured in local environment.')
+      );
+    }
 
-    if (profileError || !profile) {
+    // Get the student profile status
+    const { data: statusData, error: statusError } = await supabase.rpc('get_student_login_status', {
+      identifier: studentId,
+    });
+
+    const loginStatus = statusData && statusData.length > 0 ? statusData[0] : null;
+
+    if (statusError || !loginStatus) {
       redirect('/setup-password?error=' + encodeURIComponent('Student not found'));
     }
 
-    if (!profile.email) {
+    if (!loginStatus.profile_email) {
       redirect('/setup-password?error=' + encodeURIComponent('No email on record. Contact admin.'));
     }
 
-    // Check if auth account already exists
-    const { data: existingAuth } = await supabase.auth.admin.getUserById(profile.id);
+    if (loginStatus.has_signed_in) {
+      redirect(
+        '/setup-password?error=' +
+          encodeURIComponent('Password has already been set up. Please log in directly.')
+      );
+    }
 
-    if (!existingAuth.user) {
+    const email = loginStatus.profile_email;
+    const role = loginStatus.profile_role;
+    const profileId = loginStatus.profile_id;
+
+    // Check if auth account already exists
+    const { data: existingAuth } = await adminClient.auth.admin.getUserById(profileId);
+
+    if (!existingAuth?.user) {
       // Create auth account for this student
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: profile.email,
+      const { data: authData, error: authError } = await adminClient.auth.admin.createUser({
+        email,
         password,
         email_confirm: true,
         user_metadata: {
-          full_name: profile.full_name,
           student_code: studentId,
         },
       });
@@ -60,16 +79,16 @@ export async function setupPassword(formData: FormData) {
       }
 
       // Update profile ID if different
-      if (authData.user.id !== profile.id) {
-        await supabase
+      if (authData.user.id !== profileId) {
+        await adminClient
           .from('profiles')
           .update({ id: authData.user.id })
           .eq('student_code', studentId);
       }
     } else {
       // Update existing user password
-      const { error: updateError } = await supabase.auth.admin.updateUserById(
-        profile.id,
+      const { error: updateError } = await adminClient.auth.admin.updateUserById(
+        profileId,
         { password }
       );
 
@@ -80,7 +99,7 @@ export async function setupPassword(formData: FormData) {
 
     // Sign them in
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-      email: profile.email,
+      email,
       password,
     });
 
@@ -91,8 +110,8 @@ export async function setupPassword(formData: FormData) {
     revalidatePath('/', 'layout');
 
     // Redirect based on role
-    if (profile.role === 'admin') redirect('/admin');
-    if (profile.role === 'teacher') redirect('/teacher');
+    if (role === 'admin') redirect('/admin');
+    if (role === 'teacher') redirect('/teacher');
     redirect('/dashboard');
   } catch (e) {
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') {
