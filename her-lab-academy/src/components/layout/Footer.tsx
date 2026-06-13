@@ -17,7 +17,7 @@ export function Footer() {
               of Hope in West Pokot, Kenya.
             </p>
             <p className="mt-4 text-xs text-[var(--color-text-muted)] italic">
-              Rescuing girls. Restoring dignity. Rebuilding futures.
+              Empowering Young Women with Skills for Dignified and Fulfilling Work, Rebuilding Futures and Transforming Communities.
             </p>
           </div>
 
